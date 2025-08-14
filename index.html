@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
-  <meta name="theme-color" content="#4c00ff"/>
+  <meta name="theme-color" content="#3a00ff"/>
   <title>להב סטודיו — צילום מגנטים לאירועים</title>
   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css"/>
@@ -12,19 +12,20 @@
   <canvas id="sparkles" aria-hidden="true"></canvas>
 
   <header class="site-header">
-    <a class="logo" href="#home" aria-label="Logo">
-      <img src="assets/logo.svg" alt="להב סטודיו לוגו" width="140" height="40"/>
-    </a>
-    <button class="hamburger" aria-label="פתח תפריט" aria-expanded="false" aria-controls="nav">
-      <span></span><span></span><span></span>
-    </button>
-    <nav id="nav" class="main-nav" aria-label="ראשי">
-      <a href="#home">בית</a>
-      <a href="#services">שירותים</a>
-      <a href="#packages">חבילות</a>
-      <a href="#gallery">גלריה</a>
-      <a href="#contact" class="btn small">דברו איתי</a>
-    </nav>
+    <div class="container">
+      <div class="header-bar">
+        <a class="brand" href="#home" aria-label="Logo">
+          <img src="assets/logo.svg" alt="להב סטודיו לוגו" width="140" height="40"/>
+        </a>
+        <nav id="nav" class="main-nav" aria-label="ראשי">
+          <a href="#home">בית</a>
+          <a href="#services">שירותים</a>
+          <a href="#packages">חבילות</a>
+          <a href="#gallery">גלריה</a>
+          <a href="#contact" class="btn small">דברו איתי</a>
+        </nav>
+      </div>
+    </div>
   </header>
 
   <main id="home">
@@ -99,6 +100,12 @@
           <button class="g-item" data-cat="wedding"   data-src="assets/gallery_04.svg"><img src="assets/gallery_04.svg" alt="חתונה 2"></button>
           <button class="g-item" data-cat="bm"        data-src="assets/gallery_05.svg"><img src="assets/gallery_05.svg" alt="בר/בת מצווה 2"></button>
           <button class="g-item" data-cat="corporate" data-src="assets/gallery_06.svg"><img src="assets/gallery_06.svg" alt="אירוע חברה 2"></button>
+          <button class="g-item" data-cat="wedding"   data-src="assets/gallery_07.svg"><img src="assets/gallery_07.svg" alt="חתונה 3"></button>
+          <button class="g-item" data-cat="bm"        data-src="assets/gallery_08.svg"><img src="assets/gallery_08.svg" alt="בר/בת מצווה 3"></button>
+          <button class="g-item" data-cat="corporate" data-src="assets/gallery_09.svg"><img src="assets/gallery_09.svg" alt="אירוע חברה 3"></button>
+          <button class="g-item" data-cat="wedding"   data-src="assets/gallery_10.svg"><img src="assets/gallery_10.svg" alt="חתונה 4"></button>
+          <button class="g-item" data-cat="bm"        data-src="assets/gallery_11.svg"><img src="assets/gallery_11.svg" alt="בר/בת מצווה 4"></button>
+          <button class="g-item" data-cat="corporate" data-src="assets/gallery_12.svg"><img src="assets/gallery_12.svg" alt="אירוע חברה 4"></button>
         </div>
       </div>
     </section>
@@ -117,7 +124,6 @@
               <option>בר/בת מצווה</option><option>חתונה</option><option>ברית/ה</option><option>אירוע חברה</option><option>אחר</option>
             </select></label>
           </div>
-
           <label>בחירת חבילה
             <select name="package" id="packageSelect" required>
               <option value="Basic">Basic</option>
@@ -126,9 +132,7 @@
               <option value="פרטים בלבד">פרטים בלבד</option>
             </select>
           </label>
-
           <label>הודעה<textarea name="msg" rows="4" placeholder="ספרו לי בקצרה על האירוע"></textarea></label>
-
           <div class="row actions">
             <button type="submit" class="btn primary" id="submitBtn">שליחה</button>
             <a class="btn ghost" href="mailto:hello@example.com">או שלחו מייל</a>
