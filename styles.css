@@ -1,6 +1,5 @@
 :root{
   --ink:#0c0c12; --muted:#606376;
-  /* keep POP gradient palette unchanged */
   --brandA:#3a00ff; --brandB:#46c2ff; --brandC:#ff2b9e; --brandD:#ff9a66; --brandE:#9c00ff;
   --shadow:0 10px 30px rgba(0,0,0,.10); --radius:16px; --container:min(100% - 24px, 1100px);
 }
@@ -9,47 +8,46 @@ html,body{height:100%}
 html{background:none;overflow-x:hidden}
 body{margin:0;font-family:'Heebo',system-ui,-apple-system,'Segoe UI',Tahoma,Arial;color:var(--ink);position:relative;overflow-x:hidden}
 
-/* Full-page gradient (unchanged) */
+/* Full-page gradient with calmer saturation */
 html::before{
-  content:"";position:fixed;inset:0;z-index:-2;
+  content:""; position:fixed; inset:0; z-index:-2;
   background:linear-gradient(45deg,var(--brandA) 0%,var(--brandB) 22%,var(--brandC) 50%,var(--brandD) 78%,var(--brandE) 100%);
   background-size:420% 420%;
   animation:gradientSweep 12s ease-in-out infinite;
-  filter:saturate(135%)
+  filter:saturate(110%);
 }
 html::after{
-  content:"";position:fixed;inset:0;z-index:-1;
-  background:radial-gradient(120% 120% at 10% 10%, rgba(255,255,255,.18), rgba(255,255,255,.10) 40%, rgba(255,255,255,0) 70%)
+  content:""; position:fixed; inset:0; z-index:-1;
+  background:radial-gradient(120% 120% at 10% 10%, rgba(255,255,255,.16), rgba(255,255,255,.08) 40%, rgba(255,255,255,0) 70%);
 }
 @keyframes gradientSweep{0%{background-position:0% 0%}50%{background-position:100% 100%}100%{background-position:0% 0%}}
 @media (prefers-reduced-motion:reduce){html::before{animation:none}#sparkles{display:none}}
 
 .container{width:var(--container);margin-inline:auto;padding-inline:12px}
 img{max-width:100%;height:auto;display:block}
-#sparkles{position:fixed;inset:0;z-index:0;pointer-events:none;mix-blend-mode:screen;opacity:.22}
+#sparkles{position:fixed;inset:0;z-index:0;pointer-events:none;mix-blend-mode:screen;opacity:.20}
 header,main,footer,.whatsapp-fab{position:relative;z-index:1}
 
 /* Header (NOT sticky) */
-.site-header{padding:10px 12px 0}
-.header-bar{
-  display:flex;align-items:center;justify-content:space-between;gap:12px;
-  background:rgba(255,255,255,.58);
-  -webkit-backdrop-filter:blur(10px) saturate(1.2);
-  backdrop-filter:blur(10px) saturate(1.2);
-  border:1px solid rgba(255,255,255,.75);
-  border-radius:16px;
-  padding:10px 12px;
-  box-shadow:var(--shadow)
-}
+.site-header{padding:10px 12px 0; position:relative}
+.header-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;
+  background:rgba(255,255,255,.55); -webkit-backdrop-filter:blur(10px) saturate(1.15); backdrop-filter:blur(10px) saturate(1.15);
+  border:1px solid rgba(255,255,255,.75); border-radius:16px; padding:10px 12px; box-shadow:var(--shadow)}
 .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit;font-weight:900}
 .logo img{height:36px;filter:drop-shadow(0 1px 0 rgba(0,0,0,.15))}
 
-/* Always-horizontal menu (mobile+desktop) */
-.main-nav{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:flex-end}
+/* Nav: desktop horizontal, mobile hidden behind hamburger */
+.hamburger{display:inline-flex;flex-direction:column;gap:5px;width:44px;height:44px;border:0;background:transparent;margin-inline-start:6px}
+.hamburger span{height:2px;width:22px;background:var(--ink)}
+.main-nav{display:none;flex-wrap:wrap;gap:14px;align-items:center;justify-content:flex-end}
 .main-nav a{color:var(--ink);text-decoration:none;font-weight:800;padding:8px 10px;border-radius:10px;white-space:nowrap}
 .main-nav a:hover,.main-nav a:focus-visible{background:rgba(255,255,255,.9);outline:none}
-/* ensure menu never hidden */
-@media (max-width:420px){ .main-nav{gap:10px} }
+.main-nav.open{display:flex}
+
+@media (min-width:900px){
+  .hamburger{display:none}
+  .main-nav{display:flex}
+}
 
 /* Sections */
 section{scroll-margin-top:80px}
@@ -90,7 +88,7 @@ h1{font-size:clamp(26px,6vw,48px);margin:0 0 8px}.subtitle{font-size:clamp(15px,
 @media (min-width:700px){.packages-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (min-width:1024px){.packages-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 
-/* Category bar (chips row) */
+/* Category bar */
 .cat-wrap{position:sticky;top:70px;z-index:40;margin:0 auto 16px;max-width:var(--container);padding:10px 12px}
 .cat-inner{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:center;background:rgba(255,255,255,.62);backdrop-filter:blur(8px) saturate(1.2);border:1px solid rgba(255,255,255,.75);box-shadow:var(--shadow);padding:10px;border-radius:16px}
 .cat-inner .chip{appearance:none;border:1px solid rgba(0,0,0,.12);background:#fff;padding:.6rem 1.1rem;border-radius:999px;cursor:pointer;font-weight:900;white-space:nowrap}
