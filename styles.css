@@ -1,10 +1,8 @@
 :root{
   --ink:#0b0e14; --muted:#5f6676;
-  /* Balanced palette: deep purple, sky blue, peach, soft pink (reduced saturation) */
-  --p1:#3a00ff; --p2:#47c7ff; --p3:#ffb085; --p4:#ff73c6; --p5:#8b5cf6;
+  --p1:#3814ff; --p2:#49ccff; --p3:#ffb085; --p4:#ff7fbb; --p5:#7d5af9;
   --glass-bg: rgba(255,255,255,.22);
   --glass-brd: rgba(255,255,255,.45);
-  --glass-strong: rgba(255,255,255,.30);
   --shadow: 0 10px 30px rgba(0,0,0,.10);
   --radius: 16px;
   --container: min(100% - 24px, 1100px);
@@ -13,85 +11,73 @@
 html,body{height:100%}
 html{background:none;overflow-x:hidden}
 body{margin:0;font-family:'Heebo',system-ui,-apple-system,'Segoe UI',Tahoma,Arial;color:var(--ink);position:relative;overflow-x:hidden}
+a{ text-decoration:none; color:inherit }  /* kill blue underlines globally in our UI */
 
-/* === Wavey gradient background (loop) === */
+/* Wavey gradient (more cyan/peach, less pink) */
 html::before, html::after{
   content:""; position:fixed; inset:0; z-index:-2;
-  background: radial-gradient(60% 80% at 10% 20%, var(--p2), transparent 70%),
-              radial-gradient(70% 90% at 80% 20%, var(--p3), transparent 70%),
-              radial-gradient(80% 80% at 30% 80%, var(--p4), transparent 75%),
-              radial-gradient(90% 90% at 90% 80%, var(--p5), transparent 75%),
-              linear-gradient(45deg, var(--p1), var(--p2));
+  background:
+    radial-gradient(60% 80% at 10% 20%, var(--p2), transparent 70%),
+    radial-gradient(70% 90% at 80% 20%, var(--p3), transparent 70%),
+    radial-gradient(80% 80% at 30% 80%, var(--p4), transparent 75%),
+    radial-gradient(90% 90% at 90% 80%, var(--p5), transparent 75%),
+    linear-gradient(45deg, var(--p1), var(--p2));
   background-blend-mode: screen, screen, screen, screen, normal;
-  animation: waveMove 24s linear infinite;
-  filter: saturate(105%);
+  animation: waveMove 28s linear infinite;
+  filter: saturate(103%);
 }
-/* subtle hue drift for wavey feel, on a separate layer */
 html::after{
-  z-index:-1;
-  mix-blend-mode: soft-light;
-  animation: waveMove 32s linear infinite, hueDrift 60s linear infinite;
-  opacity:.55;
+  z-index:-1; mix-blend-mode: soft-light;
+  animation: waveMove 36s linear infinite, hueDrift 80s linear infinite;
+  opacity:.5;
 }
 @keyframes waveMove{
   0%{ background-position: 0% 0%, 100% 0%, 0% 100%, 100% 100%, 0% 0% }
   50%{ background-position: 100% 50%, 0% 50%, 100% 50%, 0% 50%, 100% 100% }
   100%{ background-position: 0% 0%, 100% 0%, 0% 100%, 100% 100%, 0% 0% }
 }
-@keyframes hueDrift{ 0%{ filter:hue-rotate(0deg) } 100%{ filter:hue-rotate(18deg) } }
-@media (prefers-reduced-motion:reduce){
-  html::before, html::after{ animation:none }
-}
+@keyframes hueDrift{ 0%{ filter:hue-rotate(0deg) } 100%{ filter:hue-rotate(16deg) } }
+@media (prefers-reduced-motion:reduce){ html::before, html::after{ animation:none } }
 
 .container{ width:var(--container); margin-inline:auto; padding-inline:12px }
 img{ max-width:100%; height:auto; display:block }
-#sparkles{ position:fixed; inset:0; z-index:0; pointer-events:none; mix-blend-mode:screen; opacity:.18 }
+#sparkles{ position:fixed; inset:0; z-index:0; pointer-events:none; mix-blend-mode:screen; opacity:.16 }
 header,main,footer,.whatsapp-fab{ position:relative; z-index:1 }
 
-/* === Header (non-sticky), glass & rounded === */
+/* Header (non-sticky), glass & rounded */
 .site-header{ padding:10px 12px 0; position:relative }
 .header-bar{
-  display:flex; align-items:center; justify-content:space-between; gap:12px;
-  background: var(--glass-strong);
-  -webkit-backdrop-filter: blur(10px) saturate(1.05);
-  backdrop-filter: blur(10px) saturate(1.05);
-  border:1px solid var(--glass-brd);
-  border-radius: var(--radius);
-  padding:10px 12px;
-  box-shadow: var(--shadow);
+  display:flex; align-items:center; gap:12px;
+  background: rgba(255,255,255,.30);
+  -webkit-backdrop-filter: blur(10px) saturate(1.05); backdrop-filter: blur(10px) saturate(1.05);
+  border:1px solid var(--glass-brd); border-radius: var(--radius); padding:10px 12px; box-shadow: var(--shadow);
 }
-.brand{ display:flex; align-items:center; gap:10px; text-decoration:none; color:inherit; font-weight:900 }
+.brand{ display:flex; align-items:center; gap:10px; text-decoration:none; color:inherit; font-weight:900; margin-inline-end:auto }
 .logo img{ height:36px; filter: drop-shadow(0 1px 0 rgba(0,0,0,.12)) }
 
-/* Desktop nav always visible, mobile overlay menu via hamburger */
-.hamburger{
-  display:inline-flex; flex-direction:column; gap:5px;
-  width:44px; height:44px; border:0; background:transparent;
-  margin-inline-start:auto; /* push to the left in RTL */
-}
+/* Hamburger left, stable */
+.hamburger{ display:inline-flex; flex-direction:column; gap:5px; width:44px; height:44px; border:0; background:transparent; }
 .hamburger span{ height:2px; width:22px; background:var(--ink) }
 @media (min-width:900px){ .hamburger{ display:none } }
 
-/* Desktop nav */
-.main-nav-desktop{ display:none; gap:16px; align-items:center; justify-content:flex-end }
-.main-nav-desktop a{ color:var(--ink); text-decoration:none; font-weight:800; padding:8px 10px; border-radius:10px; white-space:nowrap }
+/* Desktop nav visible only >=900px */
+.main-nav-desktop{ display:none; gap:16px; align-items:center }
+.main-nav-desktop a{ font-weight:800; padding:8px 10px; border-radius:10px; white-space:nowrap }
 .main-nav-desktop a:hover,.main-nav-desktop a:focus-visible{ background:rgba(255,255,255,.85); outline:none }
 @media (min-width:900px){ .main-nav-desktop{ display:flex } }
 
-/* Mobile overlay menu (horizontal, animated) */
+/* Mobile overlay menu (horizontal row with wrap, animated) */
+.mobile-menu[hidden]{ display:none !important }
 .mobile-menu{
   position:absolute; inset-inline:12px; top:100%; margin-top:8px;
-  background: var(--glass-bg); border:1px solid var(--glass-brd);
+  background: rgba(255,255,255,.22); border:1px solid var(--glass-brd);
   border-radius: var(--radius); box-shadow: var(--shadow);
   -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
-  padding:10px; display:none;
+  padding:10px;
 }
-.mobile-menu.open{ display:block }
-.mobile-menu .row{
-  display:flex; gap:14px; flex-wrap:wrap; align-items:center; justify-content:center;
-}
+.mobile-menu .row{ display:flex; gap:14px; flex-wrap:wrap; align-items:center; justify-content:center }
 .mobile-menu a{
-  color:var(--ink); text-decoration:none; font-weight:900; padding:8px 10px; border-radius:10px;
+  font-weight:900; padding:8px 10px; border-radius:10px;
   opacity:0; transform:translateY(-6px);
   animation: itemIn .35s ease forwards;
 }
@@ -105,11 +91,7 @@ header,main,footer,.whatsapp-fab{ position:relative; z-index:1 }
 /* Sections */
 section{ scroll-margin-top: 80px }
 .hero{ min-height:64vh; display:grid; place-items:center; padding:56px 0 40px }
-.hero-content{
-  text-align:center; background:var(--glass-bg); border:1px solid var(--glass-brd);
-  border-radius:18px; padding:20px; -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
-  box-shadow: var(--shadow);
-}
+.hero-content{ text-align:center; background:var(--glass-bg); border:1px solid var(--glass-brd); border-radius:18px; padding:20px; -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); box-shadow: var(--shadow) }
 h1{ font-size:clamp(26px,6vw,48px); margin:0 0 8px }
 .subtitle{ font-size:clamp(15px,4vw,20px); margin:6px 0; text-align:center }
 .cta-row{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:10px }
@@ -122,30 +104,23 @@ h1{ font-size:clamp(26px,6vw,48px); margin:0 0 8px }
 .btn.primary{ color:#fff; background:linear-gradient(135deg, var(--p1), var(--p4)); box-shadow:var(--shadow) }
 .btn.secondary{ color:#fff; background:linear-gradient(135deg, var(--p2), var(--p3)); box-shadow:var(--shadow) }
 .btn.ghost{ border:1px solid rgba(0,0,0,.14); color:var(--ink); background:transparent }
-.btn:active{ transform:translateY(1px) }
-.btn:focus{ outline:3px solid rgba(124,120,255,.35); outline-offset:2px }
+.btn:active{ transform:translateY(1px) } .btn:focus{ outline:3px solid rgba(124,120,255,.35); outline-offset:2px }
 
 /* Section blocks */
 .section{ padding:56px 0 }
-.section.alt{ background:rgba(255,255,255,.55) }
+.section.alt{ background:rgba(255,255,255,.50) }
 .section h2{ font-size:clamp(20px,4.5vw,34px); text-align:center; margin:0 0 22px }
 
-/* Services */
+/* Services / Cards */
 .cards{ display:grid; grid-template-columns:repeat(1, minmax(0,1fr)); gap:12px }
-.card{
-  background:var(--glass-bg); border:1px solid var(--glass-brd); border-radius:var(--radius);
-  padding:16px; box-shadow:var(--shadow);
-}
+.card{ background:var(--glass-bg); border:1px solid var(--glass-brd); border-radius:var(--radius); padding:16px; box-shadow:var(--shadow) }
 .card h3{ margin:0 0 6px; font-size:18px }
 @media (min-width:600px){ .cards{ grid-template-columns:repeat(2, minmax(0,1fr)) } }
 @media (min-width:900px){ .cards{ grid-template-columns:repeat(4, minmax(0,1fr)) } }
 
 /* Packages */
 .packages-grid{ display:grid; grid-template-columns:repeat(1, minmax(0,1fr)); gap:12px }
-.package{
-  background:var(--glass-bg); border:1px solid var(--glass-brd); border-radius:20px;
-  padding:18px; box-shadow:var(--shadow); position:relative
-}
+.package{ background:var(--glass-bg); border:1px solid var(--glass-brd); border-radius:20px; padding:18px; box-shadow:var(--shadow); position:relative }
 .package .tag{ font-size:12px; color:var(--muted) }
 .package ul{ margin:10px 0 16px; padding:0 1rem }
 .package.featured{ border:2px solid rgba(124,120,255,.45) }
@@ -153,16 +128,11 @@ h1{ font-size:clamp(26px,6vw,48px); margin:0 0 8px }
 @media (min-width:700px){ .packages-grid{ grid-template-columns:repeat(2, minmax(0,1fr)) } }
 @media (min-width:1024px){ .packages-grid{ grid-template-columns:repeat(3, minmax(0,1fr)) } }
 
-/* Category bar */
+/* Category chips */
 .cat-wrap{ position:sticky; top:70px; z-index:40; margin:0 auto 16px; max-width:var(--container); padding:10px 12px }
-.cat-inner{
-  display:flex; gap:8px; flex-wrap:wrap; align-items:center; justify-content:center;
-  background:var(--glass-bg); -webkit-backdrop-filter: blur(8px) saturate(1.2); backdrop-filter: blur(8px) saturate(1.2);
-  border:1px solid var(--glass-brd); box-shadow:var(--shadow);
-  padding:10px; border-radius:16px
-}
+.cat-inner{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; justify-content:center; background:var(--glass-bg); -webkit-backdrop-filter: blur(8px) saturate(1.2); backdrop-filter: blur(8px) saturate(1.2); border:1px solid var(--glass-brd); box-shadow:var(--shadow); padding:10px; border-radius:16px }
 .cat-inner .chip{ appearance:none; border:1px solid rgba(0,0,0,.12); background:#fff; padding:.6rem 1.1rem; border-radius:999px; cursor:pointer; font-weight:900; white-space:nowrap }
-.cat-inner .chip.active, .cat-inner .chip:focus-visible{ color:#fff; border-color:transparent; background:linear-gradient(135deg, var(--p2), var(--p5)); box-shadow:var(--shadow); outline:none }
+.cat-inner .chip.active,.cat-inner .chip:focus-visible{ color:#fff; border-color:transparent; background:linear-gradient(135deg, var(--p2), var(--p5)); box-shadow:var(--shadow); outline:none }
 
 /* Gallery */
 .gallery-grid{ display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:8px }
@@ -189,9 +159,7 @@ h1{ font-size:clamp(26px,6vw,48px); margin:0 0 8px }
 .lightbox[aria-hidden="false"]{ display:flex }
 .lightbox-img{ max-width:min(92vw,1200px); max-height:86vh; border-radius:14px; box-shadow:0 20px 60px rgba(0,0,0,.5) }
 .lightbox-close,.lightbox-prev,.lightbox-next{ position:absolute; background:#fff; border:0; padding:.6rem .9rem; border-radius:999px; font-weight:800; cursor:pointer }
-.lightbox-close{ top:12px; inset-inline-end:12px }
-.lightbox-prev{ top:50%; transform:translateY(-50%); inset-inline-start:12px }
-.lightbox-next{ top:50%; transform:translateY(-50%); inset-inline-end:12px }
+.lightbox-close{ top:12px; inset-inline-end:12px } .lightbox-prev{ top:50%; transform:translateY(-50%); inset-inline-start:12px } .lightbox-next{ top:50%; transform:translateY(-50%); inset-inline-end:12px }
 
 /* WhatsApp */
 .whatsapp-fab{ position:fixed; z-index:65; bottom:16px; inset-inline-end:16px; display:flex; align-items:center; gap:8px; padding:.8rem 1rem; border-radius:999px; background:#25D366; color:#fff; text-decoration:none; box-shadow:var(--shadow) }

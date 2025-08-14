@@ -1,20 +1,24 @@
-// Mobile hamburger toggle
+// Mobile hamburger + overlay toggle (hidden attribute)
 const hamb=document.querySelector('.hamburger');
-const mobileMenu=document.querySelector('.mobile-menu');
-if(hamb && mobileMenu){
+const menu=document.querySelector('.mobile-menu');
+if(hamb && menu){
   hamb.addEventListener('click', ()=>{
-    const open=mobileMenu.classList.toggle('open');
-    hamb.setAttribute('aria-expanded', String(open));
+    const isHidden=menu.hasAttribute('hidden');
+    if(isHidden){ menu.removeAttribute('hidden'); menu.classList.add('opening'); requestAnimationFrame(()=>menu.classList.remove('opening')); }
+    else{ menu.setAttribute('hidden',''); }
+    hamb.setAttribute('aria-expanded', String(isHidden));
   });
 }
 // Smooth scroll & close menu after click
-document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{
-  const id=a.getAttribute('href').slice(1), el=document.getElementById(id);
-  if(el){ e.preventDefault(); el.scrollIntoView({behavior:'smooth'}); if(mobileMenu) mobileMenu.classList.remove('open'); if(hamb) hamb.setAttribute('aria-expanded','false'); }
+document.querySelectorAll('.mobile-menu a, .main-nav-desktop a').forEach(a=>a.addEventListener('click',e=>{
+  const id=a.getAttribute('href').replace('#',''); const el=document.getElementById(id);
+  if(el){ e.preventDefault(); el.scrollIntoView({behavior:'smooth'}); if(menu) menu.setAttribute('hidden',''); if(hamb) hamb.setAttribute('aria-expanded','false'); }
 }));
+
 // Year
 const y=document.getElementById('year'); if(y) y.textContent=(new Date).getFullYear();
-// Category filter
+
+// Category chips filter
 (function(){
   const chips=Array.from(document.querySelectorAll('.cat-inner .chip'));
   const items=Array.from(document.querySelectorAll('.g-item'));
@@ -23,6 +27,7 @@ const y=document.getElementById('year'); if(y) y.textContent=(new Date).getFullY
   chips.forEach(chip=> chip.addEventListener('click', ()=>{ const cat=chip.dataset.cat||'all'; apply(cat); const url=new URL(location.href); url.searchParams.set('cat',cat); history.replaceState(null,'',url.toString()); const g=document.getElementById('gallery'); if(g) g.scrollIntoView({behavior:'smooth'}); }));
   const url=new URL(location.href); const initial=url.searchParams.get('cat')||'all'; apply(chips.some(c=>c.dataset.cat===initial)?initial:'all');
 })();
+
 // Google Sheets submit
 (function(){
   const form=document.getElementById('leadFormSheets'); if(!form) return; const msg=document.getElementById('formMsg');
