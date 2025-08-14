@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+  <meta name="theme-color" content="#7f7fd5"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css"/>
+
+  <title>להב סטודיו — בית</title>
+</head>
+<body>
+
+<header class="site-header">
+  <a class="logo" href="index.html" aria-label="Logo">
+    <img src="assets/logo.svg" alt="להב סטודיו לוגו" width="140" height="40"/>
+  </a>
+  <button class="hamburger" aria-label="פתח תפריט" aria-expanded="false" aria-controls="nav">
+    <span></span><span></span><span></span>
+  </button>
+  <nav id="nav" class="main-nav" aria-label="ראשי">
+    <a href="index.html" aria-current="page">בית</a>
+    <a href="services.html">שירותים</a>
+    <a href="packages.html">חבילות</a>
+    <a href="gallery.html">גלריה</a>
+    <a href="about.html">עלינו</a>
+    <a href="contact.html">קשר</a>
+    <a href="contact.html" class="btn small">דברו איתי</a>
+  </nav>
+</header>
+<canvas id="sparkles" aria-hidden="true"></canvas>
+
+
+  <section class="hero reveal">
+    <div class="hero-content container">
+      
+<h1>כשהאירוע שלכם הופך לקטלוג ✨</h1>
+<p class="subtitle">מגנטים בעיצוב אישי — עם סטייל, אווירה ואיכות.</p>
+<p class="subtitle">זכרונות שהאורחים שלכם לא ישכחו.</p>
+<div class="cta-row">
+  <a href="packages.html" class="btn primary">חבילות</a>
+  <a href="gallery.html" class="btn ghost">לגלריה</a>
+</div>
+<div class="hero-badges" role="list">
+  <span role="listitem">איכות הדפסה גבוהה</span>
+  <span role="listitem">צילום מקצועי</span>
+  <span role="listitem">עיצוב מותאם אישית</span>
+</div>
+
+    </div>
+  </section>
+
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <img src="assets/logo.svg" alt="" width="120" height="30" loading="lazy"/>
+    <nav class="footer-nav" aria-label="ניווט בתחתית">
+      <a href="index.html">בית</a><a href="services.html">שירותים</a><a href="packages.html">חבילות</a>
+      <a href="gallery.html">גלריה</a><a href="about.html">עלינו</a><a href="contact.html">קשר</a>
+    </nav>
+    <small>© <span id="year"></span> להב סטודיו</small>
+  </div>
+</footer>
+
+<script src="script.js" defer></script>
+<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+  <meta name="theme-color" content="#7f7fd5"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css"/>
+
+  <title>להב סטודיו — גלריה</title>
+</head>
+<body>
+
+<header class="site-header">
+  <a class="logo" href="index.html" aria-label="Logo">
+    <img src="assets/logo.svg" alt="להב סטודיו לוגו" width="140" height="40"/>
+  </a>
+  <button class="hamburger" aria-label="פתח תפריט" aria-expanded="false" aria-controls="nav">
+    <span></span><span></span><span></span>
+  </button>
+  <nav id="nav" class="main-nav" aria-label="ראשי">
+    <a href="index.html">בית</a>
+    <a href="services.html">שירותים</a>
+    <a href="packages.html">חבילות</a>
+    <a href="gallery.html" aria-current="page">גלריה</a>
+    <a href="about.html">עלינו</a>
+    <a href="contact.html">קשר</a>
+    <a href="contact.html" class="btn small">דברו איתי</a>
+  </nav>
+</header>
+<canvas id="sparkles" aria-hidden="true"></canvas>
+
+
+<main>
+  <section class="section reveal">
+    <div class="container">
+      
+<h2>גלריה</h2>
+<div class="gallery-grid">
+  <a href="assets/gallery_01.svg" class="g-item" target="_blank" rel="noopener"><img loading="lazy" src="assets/gallery_01.svg" alt="תמונת גלריה 1"/></a>
+<a href="assets/gallery_02.svg" class="g-item" target="_blank" rel="noopener"><img loading="lazy" src="assets/gallery_02.svg" alt="תמונת גלריה 2"/></a>
+<a href="assets/gallery_03.svg" class="g-item" target="_blank" rel="noopener"><img loading="lazy" src="assets/gallery_03.svg" alt="תמונת גלריה 3"/></a>
+<a href="assets/gallery_04.svg" class="g-item" target="_blank" rel="noopener"><img loading="lazy" src="assets/gallery_04.svg" alt="תמונת גלריה 4"/></a>
+<a href="assets/gallery_05.svg" class="g-item" target="_blank" rel="noopener"><img loading="lazy" src="assets/gallery_05.svg" alt="תמונת גלריה 5"/></a>
+<a href="assets/gallery_06.svg" class="g-item" target="_blank" rel="noopener"><img loading="lazy" src="assets/gallery_06.svg" alt="תמונת גלריה 6"/></a>
+<a href="assets/gallery_07.svg" class="g-item" target="_blank" rel="noopener"><img loading="lazy" src="assets/gallery_07.svg" alt="תמונת גלריה 7"/></a>
+<a href="assets/gallery_08.svg" class="g-item" target="_blank" rel="noopener"><img loading="lazy" src="assets/gallery_08.svg" alt="תמונת גלריה 8"/></a>
+<a href="assets/gallery_09.svg" class="g-item" target="_blank" rel="noopener"><img loading="lazy" src="assets/gallery_09.svg" alt="תמונת גלריה 9"/></a>
+<a href="assets/gallery_10.svg" class="g-item" target="_blank" rel="noopener"><img loading="lazy" src="assets/gallery_10.svg" alt="תמונת גלריה 10"/></a>
+<a href="assets/gallery_11.svg" class="g-item" target="_blank" rel="noopener"><img loading="lazy" src="assets/gallery_11.svg" alt="תמונת גלריה 11"/></a>
+<a href="assets/gallery_12.svg" class="g-item" target="_blank" rel="noopener"><img loading="lazy" src="assets/gallery_12.svg" alt="תמונת גלריה 12"/></a>
+</div>
+
+    </div>
+  </section>
+</main>
+
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <img src="assets/logo.svg" alt="" width="120" height="30" loading="lazy"/>
+    <nav class="footer-nav" aria-label="ניווט בתחתית">
+      <a href="index.html">בית</a><a href="services.html">שירותים</a><a href="packages.html">חבילות</a>
+      <a href="gallery.html">גלריה</a><a href="about.html">עלינו</a><a href="contact.html">קשר</a>
+    </nav>
+    <small>© <span id="year"></span> להב סטודיו</small>
+  </div>
+</footer>
+
+<script src="script.js" defer></script>
+<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+</body>
+</html>
