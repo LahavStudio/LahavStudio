@@ -1,6 +1,6 @@
 :root{
   --ink:#0e0f14; --muted:#5e6170;
-  /* Updated, richer palette (violet → blue → pink → tangerine) */
+  /* Refined palette */
   --brandA:#6a11cb;  /* deep violet */
   --brandB:#4361ee;  /* vivid blue */
   --brandC:#ff7ab6;  /* soft pink */
@@ -11,40 +11,71 @@
   --container:min(100% - 24px, 1100px);
 }
 
-*{box-sizing:border-box}
+/* Ensure the gradient covers the WHOLE page uniformly */
 html,body{height:100%}
-body{
-  margin:0; font-family:'Heebo',system-ui,-apple-system,'Segoe UI',Tahoma,Arial; color:var(--ink);
-
-  /* Two layers: soft film + animated diagonal multi-stop gradient */
-  background:
-    linear-gradient(120deg, rgba(255,255,255,.18), rgba(255,255,255,.18)),
-    linear-gradient(45deg,
+html{background:none}
+body{background:none; margin:0; font-family:'Heebo',system-ui,-apple-system,'Segoe UI',Tahoma,Arial; color:var(--ink); position:relative}
+/* Fixed, full-viewport animated diagonal gradient behind everything */
+html::before{
+  content:""; position:fixed; inset:0; z-index:-2;
+  background: linear-gradient(45deg,
       var(--brandA) 0%,
       var(--brandB) 20%,
       var(--brandC) 50%,
       var(--brandD) 75%,
       var(--brandE) 100%);
-  background-size: 100% 100%, 400% 400%;
-  background-position: 0% 0%, 0% 0%;
-  animation: gradientShift 24s ease-in-out infinite;
+  background-size:400% 400%;
+  animation: gradientSweep 24s ease-in-out infinite;
 }
-
-/* Diagonal sweep (↘), then back (↖) */
-@keyframes gradientShift{
-  0%   { background-position: 0% 0%,   0%   0%; }
-  50%  { background-position: 0% 0%, 100% 100%; }
-  100% { background-position: 0% 0%,   0%   0%; }
+/* Soft film to keep text readable */
+html::after{
+  content:""; position:fixed; inset:0; z-index:-1;
+  background: linear-gradient(120deg, rgba(255,255,255,.18), rgba(255,255,255,.18));
 }
-
-/* Reduce motion for users who prefer it */
+@keyframes gradientSweep{
+  0%{   background-position: 0%   0% }
+  50%{  background-position: 100% 100% }
+  100%{ background-position: 0%   0% }
+}
 @media (prefers-reduced-motion: reduce){
-  body{ animation: none; }
-  #sparkles{ display:none; }
+  html::before{ animation: none }
+  #sparkles{ display:none }
 }
 
-/* Slightly soften sparkles so they don't overpower new palette */
-#sparkles{ opacity:.26; mix-blend-mode:screen; position:fixed; inset:0; z-index:0; pointer-events:none }
+/* Sparkles layer a bit softer */
+#sparkles{ position:fixed; inset:0; z-index:0; pointer-events:none; mix-blend-mode:screen; opacity:.26 }
 
-/* Keep the rest of your site styles as-is … this file only changes colors + animation.
-   If you copy this into your existing styles.css, place these rules at the top so vars take effect. */
+/* Container and general */
+img{max-width:100%; height:auto; display:block}
+.container{ width:var(--container); margin-inline:auto }
+header, main, footer, .whatsapp-fab{ position:relative; z-index:1 }
+
+/* Sticky header spacing for anchors */
+section{ scroll-margin-top: 76px }
+
+/* Example translucent sections (leave as-is if כבר קיים אצלך) */
+.section.alt{ background: rgba(255,255,255,.55) }
+
+/* === CATEGORY CHIPS (Gallery filter) === */
+.cat-nav{
+  display:flex; gap:8px; flex-wrap:wrap; align-items:center; justify-content:center;
+  margin: -6px 0 16px;
+}
+.cat-nav .chip{
+  appearance:none; border:1px solid rgba(0,0,0,.12);
+  background: rgba(255,255,255,.65);
+  padding:.5rem .9rem; border-radius:999px; cursor:pointer; font-weight:700;
+}
+.cat-nav .chip.active, .cat-nav .chip:focus-visible{
+  color:#fff; border-color: transparent;
+  background: linear-gradient(135deg, var(--brandB), var(--brandE));
+  box-shadow: var(--shadow);
+  outline: none;
+}
+/* Make the gallery layout stable when filtering */
+.gallery-grid{ display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:8px }
+@media (min-width:600px){ .gallery-grid{ grid-template-columns:repeat(3, minmax(0,1fr)) } }
+@media (min-width:900px){ .gallery-grid{ grid-template-columns:repeat(4, minmax(0,1fr)) } }
+.g-item{ border-radius:16px; overflow:hidden; display:block; box-shadow:var(--shadow); border:1px solid rgba(0,0,0,.06); padding:0; background:none; cursor:zoom-in }
+.g-item img{ width:100%; height:auto; display:block; transition:transform .35s }
+.g-item:hover img{ transform:scale(1.04) }
