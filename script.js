@@ -1,19 +1,38 @@
-// Mobile hamburger + overlay toggle (hidden attribute)
+// Hamburger + overlay (open/close with animations)
 const hamb=document.querySelector('.hamburger');
 const menu=document.querySelector('.mobile-menu');
 if(hamb && menu){
   hamb.addEventListener('click', ()=>{
-    const isHidden=menu.hasAttribute('hidden');
-    if(isHidden){ menu.removeAttribute('hidden'); menu.classList.add('opening'); requestAnimationFrame(()=>menu.classList.remove('opening')); }
-    else{ menu.setAttribute('hidden',''); }
-    hamb.setAttribute('aria-expanded', String(isHidden));
+    const hidden = menu.hasAttribute('hidden');
+    if(hidden){
+      menu.classList.remove('closing');
+      menu.removeAttribute('hidden');
+      // trigger opening animation
+      menu.classList.add('opening');
+      setTimeout(()=>menu.classList.remove('opening'), 320);
+      hamb.setAttribute('aria-expanded','true');
+    }else{
+      // closing animation then hide
+      menu.classList.add('closing');
+      hamb.setAttribute('aria-expanded','false');
+      setTimeout(()=>{ menu.setAttribute('hidden',''); menu.classList.remove('closing'); }, 230);
+    }
   });
 }
-// Smooth scroll & close menu after click
-document.querySelectorAll('.mobile-menu a, .main-nav-desktop a').forEach(a=>a.addEventListener('click',e=>{
-  const id=a.getAttribute('href').replace('#',''); const el=document.getElementById(id);
-  if(el){ e.preventDefault(); el.scrollIntoView({behavior:'smooth'}); if(menu) menu.setAttribute('hidden',''); if(hamb) hamb.setAttribute('aria-expanded','false'); }
-}));
+
+// Smooth scroll for both menus; close overlay after short delay
+function handleNavClick(e){
+  const id=this.getAttribute('href').replace('#','');
+  const el=document.getElementById(id);
+  if(el){
+    e.preventDefault();
+    el.scrollIntoView({behavior:'smooth'});
+    if(menu && !menu.hasAttribute('hidden')){
+      setTimeout(()=>{ menu.classList.add('closing'); setTimeout(()=>{ menu.setAttribute('hidden',''); menu.classList.remove('closing'); }, 230); }, 250);
+    }
+  }
+}
+document.querySelectorAll('.mobile-menu a, .main-nav-desktop a').forEach(a=>a.addEventListener('click',handleNavClick));
 
 // Year
 const y=document.getElementById('year'); if(y) y.textContent=(new Date).getFullYear();
