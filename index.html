@@ -1,1 +1,162 @@
-<!doctype html><meta charset='utf-8'><title>placeholder</title>
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+  <meta name="theme-color" content="#7f7fd5"/>
+  <title>להב סטודיו — צילום מגנטים לאירועים</title>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+  <canvas id="sparkles" aria-hidden="true"></canvas>
+
+  <header class="site-header">
+    <a class="logo" href="#home" aria-label="Logo">
+      <img src="assets/logo.svg" alt="להב סטודיו לוגו" width="140" height="40"/>
+    </a>
+    <button class="hamburger" aria-label="פתח תפריט" aria-expanded="false" aria-controls="nav">
+      <span></span><span></span><span></span>
+    </button>
+    <nav id="nav" class="main-nav" aria-label="ראשי">
+      <a href="#home">בית</a>
+      <a href="#services">שירותים</a>
+      <a href="#packages">חבילות</a>
+      <a href="#gallery">גלריה</a>
+      <a href="#contact" class="btn small">דברו איתי</a>
+    </nav>
+  </header>
+
+  <main id="home">
+    <section class="hero">
+      <div class="hero-content container">
+        <h1>כשהאירוע שלכם הופך לקטלוג ✨</h1>
+        <p class="subtitle">מגנטים בעיצוב אישי — עם סטייל, אווירה ואיכות.</p>
+        <div class="cta-row">
+          <a href="#contact" class="btn primary" data-plan="Pro">לבירור מחיר (Pro)</a>
+          <a href="#gallery" class="btn ghost">לגלריה</a>
+        </div>
+        <div class="hero-badges" role="list">
+          <span role="listitem">איכות הדפסה גבוהה</span>
+          <span role="listitem">צילום מקצועי</span>
+          <span role="listitem">עיצוב מותאם אישית</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="services" class="section">
+      <div class="container">
+        <h2>מה אנחנו מציעים</h2>
+        <div class="cards">
+          <article class="card"><h3>צילום מגנטים לאירועים</h3><p>כיסוי מלא של האירוע, צילומי אורחים טבעיים ועמדת צילום ממותגת.</p></article>
+          <article class="card"><h3>עיצוב מסגרות אישיות</h3><p>מסגרות ייחודיות לפי סגנון האירוע והמותג האישי שלכם.</p></article>
+          <article class="card"><h3>סטודיו נייד</h3><p>תאורה מקצועית וזרימת עבודה מהירה — כך שהאורחים מקבלים מגנטים יפים בזמן קצר.</p></article>
+          <article class="card"><h3>גלריית אונליין</h3><p>עמוד שיתוף דיגיטלי לאורחים לאחר האירוע (אופציונלי).</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="packages" class="section alt">
+      <div class="container">
+        <h2>חבילות פופולריות</h2>
+        <div class="packages-grid">
+          <article class="package">
+            <header><h3>Basic</h3><div class="tag">לאירועים קטנים</div></header>
+            <ul><li>שעתיים צילום</li><li>עמדת מגנטים מעוצבת</li><li>150 מגנטים</li><li>מסגרת מותאמת</li></ul>
+            <a class="btn secondary" href="#contact" data-plan="Basic">לבירור מחיר</a>
+          </article>
+          <article class="package featured">
+            <div class="ribbon">הנמכרת ביותר</div>
+            <header><h3>Pro</h3><div class="tag">רוב האירועים</div></header>
+            <ul><li>4 שעות צילום</li><li>עמדת מגנטים + צלם שטח</li><li>300 מגנטים</li><li>2 עיצובים למסגרות</li></ul>
+            <a class="btn primary" href="#contact" data-plan="Pro">לבירור מחיר</a>
+          </article>
+          <article class="package">
+            <header><h3>VIP</h3><div class="tag">כיסוי מלא</div></header>
+            <ul><li>עד סיום האירוע</li><li>2 צלמים + תאורה מתקדמת</li><li>500 מגנטים</li><li>גלריה דיגיטלית ממותגת</li></ul>
+            <a class="btn secondary" href="#contact" data-plan="VIP">לבירור מחיר</a>
+          </article>
+        </div>
+        <p class="fine">* המחירים מותאמים לאופי האירוע והיקפו. דברו איתי להצעת מחיר קצרה והוגנת.</p>
+      </div>
+    </section>
+
+    <section id="gallery" class="section">
+      <div class="container">
+        <h2>גלריה</h2>
+        <div class="gallery-grid">
+          <button class="g-item" data-src="assets/gallery_01.svg" aria-label="פתח תמונה 1"><img loading="lazy" src="assets/gallery_01.svg" alt="תמונת גלריה 1"/></button>
+<button class="g-item" data-src="assets/gallery_02.svg" aria-label="פתח תמונה 2"><img loading="lazy" src="assets/gallery_02.svg" alt="תמונת גלריה 2"/></button>
+<button class="g-item" data-src="assets/gallery_03.svg" aria-label="פתח תמונה 3"><img loading="lazy" src="assets/gallery_03.svg" alt="תמונת גלריה 3"/></button>
+<button class="g-item" data-src="assets/gallery_04.svg" aria-label="פתח תמונה 4"><img loading="lazy" src="assets/gallery_04.svg" alt="תמונת גלריה 4"/></button>
+<button class="g-item" data-src="assets/gallery_05.svg" aria-label="פתח תמונה 5"><img loading="lazy" src="assets/gallery_05.svg" alt="תמונת גלריה 5"/></button>
+<button class="g-item" data-src="assets/gallery_06.svg" aria-label="פתח תמונה 6"><img loading="lazy" src="assets/gallery_06.svg" alt="תמונת גלריה 6"/></button>
+<button class="g-item" data-src="assets/gallery_07.svg" aria-label="פתח תמונה 7"><img loading="lazy" src="assets/gallery_07.svg" alt="תמונת גלריה 7"/></button>
+<button class="g-item" data-src="assets/gallery_08.svg" aria-label="פתח תמונה 8"><img loading="lazy" src="assets/gallery_08.svg" alt="תמונת גלריה 8"/></button>
+<button class="g-item" data-src="assets/gallery_09.svg" aria-label="פתח תמונה 9"><img loading="lazy" src="assets/gallery_09.svg" alt="תמונת גלריה 9"/></button>
+<button class="g-item" data-src="assets/gallery_10.svg" aria-label="פתח תמונה 10"><img loading="lazy" src="assets/gallery_10.svg" alt="תמונת גלריה 10"/></button>
+<button class="g-item" data-src="assets/gallery_11.svg" aria-label="פתח תמונה 11"><img loading="lazy" src="assets/gallery_11.svg" alt="תמונת גלריה 11"/></button>
+<button class="g-item" data-src="assets/gallery_12.svg" aria-label="פתח תמונה 12"><img loading="lazy" src="assets/gallery_12.svg" alt="תמונת גלריה 12"/></button>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="section alt">
+      <div class="container">
+        <h2>דברו איתי</h2>
+        <form class="contact-form" id="leadFormSheets" onsubmit="return false;">
+          <div class="row">
+            <label>שם מלא<input required name="name" placeholder="איך לקרוא לכם?"></label>
+            <label>טלפון<input required name="phone" inputmode="tel" placeholder="מספר ליצירת קשר"></label>
+          </div>
+          <div class="row">
+            <label>תאריך האירוע<input name="event_date" type="date"></label>
+            <label>סוג האירוע<select name="event_type">
+              <option>בר/בת מצווה</option><option>חתונה</option><option>ברית/ה</option><option>אירוע חברה</option><option>אחר</option>
+            </select></label>
+          </div>
+
+          <label>בחירת חבילה
+            <select name="package" id="packageSelect" required>
+              <option value="Basic">Basic</option>
+              <option value="Pro">Pro</option>
+              <option value="VIP">VIP</option>
+              <option value="פרטים בלבד">פרטים בלבד</option>
+            </select>
+          </label>
+
+          <label>הודעה<textarea name="msg" rows="4" placeholder="ספרו לי בקצרה על האירוע"></textarea></label>
+
+          <div class="row actions">
+            <button type="submit" class="btn primary" id="submitBtn">שליחה</button>
+            <a class="btn ghost" href="mailto:hello@example.com">או שלחו מייל</a>
+          </div>
+          <p class="fine" id="formMsg"></p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <div class="lightbox" aria-hidden="true" role="dialog" aria-label="תצוגת תמונה">
+    <button class="lightbox-close" aria-label="סגור">✕</button>
+    <button class="lightbox-prev" aria-label="קודם">‹</button>
+    <img class="lightbox-img" alt="תמונה מוגדלת">
+    <button class="lightbox-next" aria-label="הבא">›</button>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <img src="assets/logo.svg" alt="" width="120" height="30" loading="lazy"/>
+      <nav class="footer-nav" aria-label="ניווט בתחתית">
+        <a href="#home">בית</a><a href="#services">שירותים</a><a href="#packages">חבילות</a>
+        <a href="#gallery">גלריה</a><a href="#contact">קשר</a>
+      </nav>
+      <small>© <span id="year"></span> להב סטודיו</small>
+    </div>
+  </footer>
+
+  <a class="whatsapp-fab" href="https://wa.me/972000000000" target="_blank" rel="noopener">ווצאפ</a>
+
+  <script src="script.js" defer></script>
+</body>
+</html>
