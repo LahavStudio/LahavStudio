@@ -17,16 +17,26 @@
         <a class="brand logo" href="#home" aria-label="Logo">
           <img src="assets/logo.svg" alt="לוגו להב סטודיו" width="140" height="40"/>
         </a>
-        <button class="hamburger" aria-label="פתח תפריט" aria-expanded="false" aria-controls="nav">
+        <button class="hamburger" aria-label="פתח תפריט" aria-expanded="false">
           <span></span><span></span><span></span>
         </button>
-        <nav id="nav" class="main-nav" aria-label="ראשי">
+        <nav class="main-nav-desktop" aria-label="ראשי">
           <a href="#home">בית</a>
           <a href="#services">שירותים</a>
           <a href="#packages">חבילות</a>
           <a href="#gallery">גלריה</a>
           <a href="#contact" class="btn small">דברו איתי</a>
         </nav>
+      </div>
+      <!-- Mobile overlay menu -->
+      <div class="mobile-menu" role="dialog" aria-label="תפריט">
+        <div class="row">
+          <a href="#home">בית</a>
+          <a href="#services">שירותים</a>
+          <a href="#packages">חבילות</a>
+          <a href="#gallery">גלריה</a>
+          <a href="#contact">דברו איתי</a>
+        </div>
       </div>
     </div>
   </header>
@@ -113,7 +123,7 @@
       </div>
     </section>
 
-    <section id="contact" class="section alt">
+    <section id="contact" class="section">
       <div class="container">
         <h2>דברו איתי</h2>
         <form class="contact-form" id="leadFormSheets" onsubmit="return false;">

@@ -1,19 +1,20 @@
 // Mobile hamburger toggle
-const hamb=document.querySelector('.hamburger'); const nav=document.getElementById('nav');
-if(hamb && nav){
+const hamb=document.querySelector('.hamburger');
+const mobileMenu=document.querySelector('.mobile-menu');
+if(hamb && mobileMenu){
   hamb.addEventListener('click', ()=>{
-    const open=nav.classList.toggle('open');
+    const open=mobileMenu.classList.toggle('open');
     hamb.setAttribute('aria-expanded', String(open));
   });
 }
-// Smooth scroll
+// Smooth scroll & close menu after click
 document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{
   const id=a.getAttribute('href').slice(1), el=document.getElementById(id);
-  if(el){ e.preventDefault(); el.scrollIntoView({behavior:'smooth'}); if(nav) nav.classList.remove('open'); if(hamb) hamb.setAttribute('aria-expanded','false'); }
+  if(el){ e.preventDefault(); el.scrollIntoView({behavior:'smooth'}); if(mobileMenu) mobileMenu.classList.remove('open'); if(hamb) hamb.setAttribute('aria-expanded','false'); }
 }));
 // Year
 const y=document.getElementById('year'); if(y) y.textContent=(new Date).getFullYear();
-// Category chips filter
+// Category filter
 (function(){
   const chips=Array.from(document.querySelectorAll('.cat-inner .chip'));
   const items=Array.from(document.querySelectorAll('.g-item'));
