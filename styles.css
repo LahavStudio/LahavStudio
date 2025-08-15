@@ -13,7 +13,7 @@ html,body{height:100%}
 html{background:none;overflow-x:hidden}
 body{margin:0;font-family:'Heebo',system-ui,-apple-system,'Segoe UI',Tahoma,Arial;color:var(--ink);position:relative;overflow-x:hidden}
 
-/* Animated gradient background (v4.6.2) */
+/* Animated gradient background */
 body{
   background: linear-gradient(45deg, var(--p1), var(--p2), var(--p3), var(--p4), var(--p1));
   background-size: 400% 400%;
@@ -36,7 +36,7 @@ a{ text-decoration:none; color:inherit }
 img{ max-width:100%; height:auto; display:block }
 header,main,footer,.whatsapp-fab{ position:relative; z-index:1 }
 
-/* Header (unchanged) */
+/* Header */
 .site-header{ padding:10px 12px 0 }
 .header-bar{
   position:relative; height:70px; border-radius:var(--radius);
@@ -55,10 +55,9 @@ header,main,footer,.whatsapp-fab{ position:relative; z-index:1 }
 .hamburger span{ height:2px; width:24px; background:var(--ink) }
 .main-nav-desktop{ position:absolute; inset-inline-end:12px; top:50%; transform:translateY(-50%); display:none; gap:16px; align-items:center }
 .main-nav-desktop a{ font-weight:800; padding:8px 10px; border-radius:10px; white-space:nowrap }
-.main-nav-desktop a:hover,.main-nav-desktop a:focus-visible{ background:rgba(255,255,255,.85); outline:none }
 @media (min-width:900px){ .main-nav-desktop{ display:flex } .hamburger{ display:none } }
 
-/* Mobile menu (unchanged) */
+/* Mobile menu */
 .mobile-menu[hidden]{ display:none !important }
 .mobile-menu{
   position:absolute; inset-inline:12px; top:100%; margin-top:8px;
@@ -76,6 +75,9 @@ header,main,footer,.whatsapp-fab{ position:relative; z-index:1 }
 @keyframes itemOut{ to{ opacity:0; transform:translateY(-8px) } }
 .mobile-menu.opening a:nth-child(1){ animation-delay:.03s } .mobile-menu.opening a:nth-child(2){ animation-delay:.06s }
 .mobile-menu.opening a:nth-child(3){ animation-delay:.09s } .mobile-menu.opening a:nth-child(4){ animation-delay:.12s } .mobile-menu.opening a:nth-child(5){ animation-delay:.15s }
+/* v5.0.1 — keep items visible while menu is open */
+.mobile-menu.open .row a{ opacity:1 !important; transform:none !important; pointer-events:auto }
+.mobile-menu.open{ pointer-events:auto }
 
 /* Buttons */
 .btn{ display:inline-block; padding:.9rem 1.2rem; border-radius:14px; font-weight:900; text-decoration:none; cursor:pointer }
@@ -123,11 +125,11 @@ section{ scroll-margin-top: 96px }
 .g-item img{ width:100%; height:auto; display:block; transition:transform .35s }
 .g-item:hover img{ transform:scale(1.04) }
 
-/* ===== CONTACT (only part changed to v3 look) ===== */
+/* Contact (visuals from v3) */
 .contact-form{
-  background:#ffffff;      /* white background as old version */
+  background:#ffffff;
   border:1px solid #e9eaf6;
-  border-radius:24px;      /* slightly rounder like v3 */
+  border-radius:24px;
   padding:18px;
   box-shadow: var(--shadow);
 }
@@ -135,17 +137,14 @@ section{ scroll-margin-top: 96px }
 .contact-form label{ display:flex; flex-direction:column; gap:6px; font-weight:900 }
 .contact-form input,.contact-form select,.contact-form textarea{
   padding:.95rem 1rem;
-  border-radius:16px;              /* pill-like inputs as v3 */
+  border-radius:16px;
   border:1px solid rgba(0,0,0,.12);
   font-size:16px;
-  background:#f7faff;              /* soft white-blue fill */
+  background:#f7faff;
 }
-/* The old gradient send button style */
 .contact-form .btn.primary#submitBtn{
-  background: linear-gradient(135deg, #7C4DFF, #FF6EC7) !important; /* violet -> pink */
-  color:#fff;
-  border:0;
-  border-radius:18px;
+  background: linear-gradient(135deg, #7C4DFF, #FF6EC7) !important;
+  color:#fff; border:0; border-radius:18px;
 }
 .contact-form .btn.ghost{ background:transparent; border:1px solid rgba(0,0,0,.14) }
 
@@ -153,10 +152,8 @@ section{ scroll-margin-top: 96px }
   .contact-form .row{ grid-template-columns:1fr 1fr }
 }
 
-/* Footer */
+/* Footer + WhatsApp */
 .site-footer{ padding:24px 0; border-top:1px solid rgba(0,0,0,.06); background:rgba(255,255,255,.85) }
 .footer-inner{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap }
-
-/* WhatsApp */
 .whatsapp-fab{ position:fixed; z-index:65; bottom:16px; inset-inline-end:16px; display:flex; align-items:center; gap:8px; padding:.8rem 1rem; border-radius:999px; background:#25D366; color:#fff; text-decoration:none; box-shadow:var(--shadow) }
 @media (min-width:900px){ .whatsapp-fab{ bottom:24px } }
