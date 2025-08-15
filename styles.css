@@ -229,3 +229,6 @@ section{ scroll-margin-top: 96px }
 .mobile-menu .row a{ cursor:pointer; display:inline-block }
 @keyframes menuItemIn{ to{ opacity:1; transform:none } }
 @keyframes menuItemOut{ to{ opacity:0; transform:translateY(-8px) } }
+
+/* v5.1.1 pointer-events */
+.mobile-menu .row a{ pointer-events:auto !important }

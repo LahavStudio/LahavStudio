@@ -60,9 +60,7 @@
   }, {passive:false});
 
   // Click inside the menu => smooth-scroll + close
-  menu.addEventListener('click', (e)=>{
-    const a = e.target.closest('a');
-    if(!a) return;
+  if(!a) return;
     const href = a.getAttribute('href') || '';
     if(href.startsWith('#')){
       const id = href.slice(1);
@@ -74,6 +72,21 @@
 
   // ESC closes
   document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') closeMenu(); });
+})();
+
+// v5.1.1 — make links use native anchor behavior, then close menu
+(function(){
+  const menu = document.querySelector('.mobile-menu');
+  if(!menu) return;
+  const items = Array.from(menu.querySelectorAll('.row a'));
+  items.forEach(a=>{
+    a.addEventListener('click', function(){
+      // allow default '#id' scroll; close menu right after
+      if (typeof closeMenu === 'function') {
+        setTimeout(closeMenu, 30);
+      }
+    }, {passive:true});
+  });
 })();
 
 
