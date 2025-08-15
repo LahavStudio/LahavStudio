@@ -1,4 +1,4 @@
-// Hamburger + overlay (open/close with animations)
+// Hamburger + overlay open/close with mirrored animations
 const hamb=document.querySelector('.hamburger');
 const menu=document.querySelector('.mobile-menu');
 if(hamb && menu){
@@ -7,12 +7,10 @@ if(hamb && menu){
     if(hidden){
       menu.classList.remove('closing');
       menu.removeAttribute('hidden');
-      // trigger opening animation
       menu.classList.add('opening');
       setTimeout(()=>menu.classList.remove('opening'), 320);
       hamb.setAttribute('aria-expanded','true');
     }else{
-      // closing animation then hide
       menu.classList.add('closing');
       hamb.setAttribute('aria-expanded','false');
       setTimeout(()=>{ menu.setAttribute('hidden',''); menu.classList.remove('closing'); }, 230);
@@ -20,19 +18,19 @@ if(hamb && menu){
   });
 }
 
-// Smooth scroll for both menus; close overlay after short delay
-function handleNavClick(e){
+// Smooth scroll for menu items; close after short delay
+function handleNav(e){
   const id=this.getAttribute('href').replace('#','');
   const el=document.getElementById(id);
   if(el){
     e.preventDefault();
     el.scrollIntoView({behavior:'smooth'});
     if(menu && !menu.hasAttribute('hidden')){
-      setTimeout(()=>{ menu.classList.add('closing'); setTimeout(()=>{ menu.setAttribute('hidden',''); menu.classList.remove('closing'); }, 230); }, 250);
+      setTimeout(()=>{ menu.classList.add('closing'); setTimeout(()=>{ menu.setAttribute('hidden',''); menu.classList.remove('closing'); }, 230); }, 260);
     }
   }
 }
-document.querySelectorAll('.mobile-menu a, .main-nav-desktop a').forEach(a=>a.addEventListener('click',handleNavClick));
+document.querySelectorAll('.mobile-menu a, .main-nav-desktop a').forEach(a=>a.addEventListener('click',handleNav));
 
 // Year
 const y=document.getElementById('year'); if(y) y.textContent=(new Date).getFullYear();
