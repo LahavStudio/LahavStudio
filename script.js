@@ -1,3 +1,67 @@
+
+// v5.0.4 — robust hamburger menu: staggered animations + working links + reliable toggle
+(function(){
+  const hamb = document.querySelector('.hamburger');
+  const menu = document.querySelector('.mobile-menu');
+  if(!hamb || !menu) return;
+  let isOpen = false, isAnimating = false;
+
+  function openMenu(){
+    if(isAnimating || isOpen) return;
+    isAnimating = true;
+    menu.removeAttribute('hidden');
+    menu.classList.remove('closing');
+    menu.classList.add('opening');
+    // Wait for staggered itemIn to finish
+    setTimeout(()=>{
+      menu.classList.remove('opening');
+      menu.classList.add('open'); // now keep links visible & clickable
+      isAnimating = false; isOpen = true;
+      hamb.setAttribute('aria-expanded','true');
+    }, 350);
+  }
+
+  function closeMenu(){
+    if(isAnimating || !isOpen) return;
+    isAnimating = true;
+    menu.classList.remove('opening');
+    menu.classList.remove('open');    // allow itemOut animation
+    menu.classList.add('closing');
+    hamb.setAttribute('aria-expanded','false');
+    setTimeout(()=>{
+      menu.setAttribute('hidden','');
+      menu.classList.remove('closing');
+      isAnimating = false; isOpen = false;
+    }, 250);
+  }
+
+  hamb.addEventListener('click', (e)=>{
+    e.preventDefault(); e.stopPropagation();
+    if(isOpen){ closeMenu(); } else { openMenu(); }
+  }, {passive:false});
+
+  // Delegate clicks inside the menu
+  menu.addEventListener('click', (e)=>{
+    const a = e.target.closest('a');
+    if(!a) return;
+    const href = a.getAttribute('href') || '';
+    if(href.startsWith('#')){
+      const id = href.slice(1);
+      const el = document.getElementById(id);
+      if(el){ e.preventDefault(); el.scrollIntoView({behavior:'smooth'}); }
+      closeMenu();
+    }
+  });
+
+  // ESC to close
+  document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') closeMenu(); });
+
+  // Defensive: ensure clean state on load
+  document.addEventListener('DOMContentLoaded', ()=>{
+    if(menu.hasAttribute('hidden')){ menu.classList.remove('open','opening','closing'); }
+  });
+})();
+
 // v5.0.1 — stable menu + .open state + chips + Sheets submit
 let isOpen=false, isAnimating=false;
 const hamb=document.querySelector('.hamburger');
