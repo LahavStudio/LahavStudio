@@ -55,27 +55,42 @@ header,main,footer,.whatsapp-fab{ position:relative; z-index:1 }
 .hamburger span{ height:2px; width:24px; background:var(--ink) }
 .main-nav-desktop{ position:absolute; inset-inline-end:12px; top:50%; transform:translateY(-50%); display:none; gap:16px; align-items:center }
 .main-nav-desktop a{ font-weight:800; padding:8px 10px; border-radius:10px; white-space:nowrap }
+.main-nav-desktop a:hover,.main-nav-desktop a:focus-visible{ background:rgba(255,255,255,.85); outline:none }
 @media (min-width:900px){ .main-nav-desktop{ display:flex } .hamburger{ display:none } }
 
 /* Mobile menu */
 .mobile-menu[hidden]{ display:none !important }
-.mobile-menu{ z-index:9999;
+.mobile-menu{
   position:absolute; inset-inline:12px; top:100%; margin-top:8px;
-  z-index:100;
+  z-index:9999;
   background: var(--glass-bg); border:1px solid var(--glass-brd);
   border-radius: var(--radius); box-shadow: var(--shadow);
   -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
   padding:12px; overflow:hidden; pointer-events:auto;
 }
 .mobile-menu .row{ display:flex; gap:14px; flex-wrap:wrap; align-items:center; justify-content:center }
-.mobile-menu a{ font-weight:900; padding:8px 10px; border-radius:10px; opacity:0; transform:translateY(-8px) }
+.mobile-menu a{ font-weight:900; padding:8px 10px; border-radius:10px; opacity:0; transform:translateY(-8px); cursor:pointer; display:inline-block }
 .mobile-menu.opening a{ animation: itemIn .28s ease forwards }
 .mobile-menu.closing a{ animation: itemOut .22s ease forwards }
+/* entering */
 @keyframes itemIn{ to{ opacity:1; transform:none } }
+/* exiting */
 @keyframes itemOut{ to{ opacity:0; transform:translateY(-8px) } }
-.mobile-menu.opening a:nth-child(1){ animation-delay:.03s } .mobile-menu.opening a:nth-child(2){ animation-delay:.06s }
-.mobile-menu.opening a:nth-child(3){ animation-delay:.09s } .mobile-menu.opening a:nth-child(4){ animation-delay:.12s } .mobile-menu.opening a:nth-child(5){ animation-delay:.15s }
-/* v5.0.1 — keep items visible while menu is open */
+
+/* stagger (enter) */
+.mobile-menu.opening a:nth-child(1){ animation-delay:.03s }
+.mobile-menu.opening a:nth-child(2){ animation-delay:.06s }
+.mobile-menu.opening a:nth-child(3){ animation-delay:.09s }
+.mobile-menu.opening a:nth-child(4){ animation-delay:.12s }
+.mobile-menu.opening a:nth-child(5){ animation-delay:.15s }
+/* reverse stagger (exit) */
+.mobile-menu.closing a:nth-child(1){ animation-delay:.15s }
+.mobile-menu.closing a:nth-child(2){ animation-delay:.12s }
+.mobile-menu.closing a:nth-child(3){ animation-delay:.09s }
+.mobile-menu.closing a:nth-child(4){ animation-delay:.06s }
+.mobile-menu.closing a:nth-child(5){ animation-delay:.03s }
+
+/* Keep visible & clickable only when fully open (not during opening/closing) */
 .mobile-menu.open:not(.opening):not(.closing) .row a{ opacity:1; transform:none; pointer-events:auto }
 .mobile-menu.open{ pointer-events:auto }
 
@@ -125,7 +140,7 @@ section{ scroll-margin-top: 96px }
 .g-item img{ width:100%; height:auto; display:block; transition:transform .35s }
 .g-item:hover img{ transform:scale(1.04) }
 
-/* Contact (visuals from v3) */
+/* Contact (white card visual) */
 .contact-form{
   background:#ffffff;
   border:1px solid #e9eaf6;
@@ -157,5 +172,3 @@ section{ scroll-margin-top: 96px }
 .footer-inner{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap }
 .whatsapp-fab{ position:fixed; z-index:65; bottom:16px; inset-inline-end:16px; display:flex; align-items:center; gap:8px; padding:.8rem 1rem; border-radius:999px; background:#25D366; color:#fff; text-decoration:none; box-shadow:var(--shadow) }
 @media (min-width:900px){ .whatsapp-fab{ bottom:24px } }
-
-.mobile-menu a{ cursor:pointer; display:inline-block }
