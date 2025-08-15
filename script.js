@@ -1,11 +1,10 @@
 
-// v5.0.7 — single-source hamburger controller (stagger open, reverse stagger close, clickable links)
+// ===== v5.0.8 — Hamburger controller (stagger IN, reverse stagger OUT, clickable links) =====
 (function(){
   const hamb = document.querySelector('.hamburger');
   const menu = document.querySelector('.mobile-menu');
   if(!hamb || !menu) return;
-  // Prevent double init
-  if(menu.dataset.menuInit === '1') return;
+  if(menu.dataset.menuInit === '1') return; // avoid double init
   menu.dataset.menuInit = '1';
 
   let isOpen = false, isAnimating = false;
@@ -18,24 +17,24 @@
     menu.classList.add('opening');
     setTimeout(()=>{
       menu.classList.remove('opening');
-      menu.classList.add('open');
+      menu.classList.add('open'); // links stay visible & clickable after opening
       isAnimating = false; isOpen = true;
       hamb.setAttribute('aria-expanded','true');
-    }, 350);
+    }, 350); // 150ms max delay + ~200ms anim
   }
 
   function closeMenu(){
     if(isAnimating || !isOpen) return;
     isAnimating = true;
     menu.classList.remove('opening');
-    menu.classList.remove('open');   // enable itemOut animation
+    menu.classList.remove('open');   // allow reverse-stagger OUT
     menu.classList.add('closing');
     hamb.setAttribute('aria-expanded','false');
     setTimeout(()=>{
       menu.setAttribute('hidden','');
       menu.classList.remove('closing');
       isAnimating = false; isOpen = false;
-    }, 400); // 150ms max delay + 220ms itemOut
+    }, 400); // 150ms max delay + ~220ms anim
   }
 
   hamb.addEventListener('click',(e)=>{
@@ -43,7 +42,7 @@
     if(isOpen){ closeMenu(); } else { openMenu(); }
   }, {passive:false});
 
-  // Make menu links clickable + smooth scroll + close with animation
+  // Click inside the menu: smooth-scroll and close with animation
   menu.addEventListener('click', (e)=>{
     const a = e.target.closest('a');
     if(!a) return;
@@ -56,12 +55,15 @@
     }
   });
 
+  // ESC closes
   document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') closeMenu(); });
 
-  // Clean state on load
+  // Defensive: clean state on load
   if(menu.hasAttribute('hidden')){ menu.classList.remove('open','opening','closing'); }
 })();
 
+
+// v5.0.7 — single-source hamburger controller (stagger open, reverse stagger close, clickable links)
 // v5.0.5b — robust hamburger: staggered open, reverse stagger close, clickable links
 
 // Year
