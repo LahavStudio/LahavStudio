@@ -7,44 +7,27 @@ function openMenu(){
   menu.classList.remove('closing');
   menu.removeAttribute('hidden');
   menu.classList.add('opening');
-  menu.classList.add('open');
+  // NOTE: we DO NOT add .open yet, so the 'itemIn' animation is visible
   setTimeout(()=>{
     menu.classList.remove('opening');
+    menu.classList.add('open'); // anchors stay visible/clickable after animation
     isAnimating=false; isOpen=true;
     hamb.setAttribute('aria-expanded','true');
   }, 320);
 }
 function closeMenu(){
+  menu.classList.remove('opening');
+  menu.classList.remove('open'); // allow 'itemOut' to show
   menu.classList.add('closing');
   hamb.setAttribute('aria-expanded','false');
   setTimeout(()=>{
     menu.setAttribute('hidden','');
     menu.classList.remove('closing');
-    menu.classList.remove('open');
     isAnimating=false; isOpen=false;
   }, 230);
 }
 
-if(hamb && menu){
-  hamb.addEventListener('click',(e)=>{
-    e.preventDefault(); e.stopPropagation();
-    if(isAnimating) return;
-    isAnimating=true;
-    if(!isOpen){ openMenu(); } else { closeMenu(); }
-  }, {passive:false});
-}
 
-function handleNav(e){
-  const id=this.getAttribute('href').replace('#','');
-  const el=document.getElementById(id);
-  if(el){
-    e.preventDefault();
-    el.scrollIntoView({behavior:'smooth'});
-    if(isOpen){
-      setTimeout(()=>{ closeMenu(); }, 260);
-    }
-  }
-}
 document.querySelectorAll('.mobile-menu a, .main-nav-desktop a').forEach(a=>a.addEventListener('click',handleNav));
 
 // Year

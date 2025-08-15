@@ -59,7 +59,7 @@ header,main,footer,.whatsapp-fab{ position:relative; z-index:1 }
 
 /* Mobile menu */
 .mobile-menu[hidden]{ display:none !important }
-.mobile-menu{
+.mobile-menu{ z-index:9999;
   position:absolute; inset-inline:12px; top:100%; margin-top:8px;
   z-index:100;
   background: var(--glass-bg); border:1px solid var(--glass-brd);
@@ -76,7 +76,7 @@ header,main,footer,.whatsapp-fab{ position:relative; z-index:1 }
 .mobile-menu.opening a:nth-child(1){ animation-delay:.03s } .mobile-menu.opening a:nth-child(2){ animation-delay:.06s }
 .mobile-menu.opening a:nth-child(3){ animation-delay:.09s } .mobile-menu.opening a:nth-child(4){ animation-delay:.12s } .mobile-menu.opening a:nth-child(5){ animation-delay:.15s }
 /* v5.0.1 — keep items visible while menu is open */
-.mobile-menu.open .row a{ opacity:1 !important; transform:none !important; pointer-events:auto }
+.mobile-menu.open:not(.opening):not(.closing) .row a{ opacity:1; transform:none; pointer-events:auto }
 .mobile-menu.open{ pointer-events:auto }
 
 /* Buttons */
@@ -157,3 +157,5 @@ section{ scroll-margin-top: 96px }
 .footer-inner{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap }
 .whatsapp-fab{ position:fixed; z-index:65; bottom:16px; inset-inline-end:16px; display:flex; align-items:center; gap:8px; padding:.8rem 1rem; border-radius:999px; background:#25D366; color:#fff; text-decoration:none; box-shadow:var(--shadow) }
 @media (min-width:900px){ .whatsapp-fab{ bottom:24px } }
+
+.mobile-menu a{ cursor:pointer; display:inline-block }
