@@ -13,7 +13,7 @@ html,body{height:100%}
 html{background:none;overflow-x:hidden}
 body{margin:0;font-family:'Heebo',system-ui,-apple-system,'Segoe UI',Tahoma,Arial;color:var(--ink);position:relative;overflow-x:hidden}
 
-/* v3-style diagonal gradient + sparkles */
+/* Animated gradient background (v4.6.2) */
 body{
   background: linear-gradient(45deg, var(--p1), var(--p2), var(--p3), var(--p4), var(--p1));
   background-size: 400% 400%;
@@ -36,7 +36,7 @@ a{ text-decoration:none; color:inherit }
 img{ max-width:100%; height:auto; display:block }
 header,main,footer,.whatsapp-fab{ position:relative; z-index:1 }
 
-/* Header */
+/* Header (unchanged) */
 .site-header{ padding:10px 12px 0 }
 .header-bar{
   position:relative; height:70px; border-radius:var(--radius);
@@ -58,7 +58,7 @@ header,main,footer,.whatsapp-fab{ position:relative; z-index:1 }
 .main-nav-desktop a:hover,.main-nav-desktop a:focus-visible{ background:rgba(255,255,255,.85); outline:none }
 @media (min-width:900px){ .main-nav-desktop{ display:flex } .hamburger{ display:none } }
 
-/* Mobile menu */
+/* Mobile menu (unchanged) */
 .mobile-menu[hidden]{ display:none !important }
 .mobile-menu{
   position:absolute; inset-inline:12px; top:100%; margin-top:8px;
@@ -123,13 +123,35 @@ section{ scroll-margin-top: 96px }
 .g-item img{ width:100%; height:auto; display:block; transition:transform .35s }
 .g-item:hover img{ transform:scale(1.04) }
 
-/* Contact */
-.contact-form{ background:var(--glass-bg); border:1px solid var(--glass-brd); border-radius:20px; padding:16px; box-shadow:var(--shadow) }
+/* ===== CONTACT (only part changed to v3 look) ===== */
+.contact-form{
+  background:#ffffff;      /* white background as old version */
+  border:1px solid #e9eaf6;
+  border-radius:24px;      /* slightly rounder like v3 */
+  padding:18px;
+  box-shadow: var(--shadow);
+}
 .contact-form .row{ display:grid; grid-template-columns:1fr; gap:10px; margin-bottom:10px }
 .contact-form label{ display:flex; flex-direction:column; gap:6px; font-weight:900 }
-.contact-form input,.contact-form select,.contact-form textarea{ padding:.85rem 1rem; border-radius:12px; border:1px solid rgba(0,0,0,.18); font-size:16px; background:#fafbff }
-@media (min-width:700px){ .contact-form .row{ grid-template-columns:1fr 1fr } }
-.fine{ color:var(--muted); font-size:13px }
+.contact-form input,.contact-form select,.contact-form textarea{
+  padding:.95rem 1rem;
+  border-radius:16px;              /* pill-like inputs as v3 */
+  border:1px solid rgba(0,0,0,.12);
+  font-size:16px;
+  background:#f7faff;              /* soft white-blue fill */
+}
+/* The old gradient send button style */
+.contact-form .btn.primary#submitBtn{
+  background: linear-gradient(135deg, #7C4DFF, #FF6EC7) !important; /* violet -> pink */
+  color:#fff;
+  border:0;
+  border-radius:18px;
+}
+.contact-form .btn.ghost{ background:transparent; border:1px solid rgba(0,0,0,.14) }
+
+@media (min-width:700px){
+  .contact-form .row{ grid-template-columns:1fr 1fr }
+}
 
 /* Footer */
 .site-footer{ padding:24px 0; border-top:1px solid rgba(0,0,0,.06); background:rgba(255,255,255,.85) }

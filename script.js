@@ -1,4 +1,4 @@
-// v4.6.2 — stable menu state + CTAs + chips + sheets
+// v5 (based on v4.6.2) — stable menu + chips + Sheets submit
 const hamb=document.querySelector('.hamburger');
 const menu=document.querySelector('.mobile-menu');
 let isOpen=false, isAnimating=false;
@@ -19,9 +19,13 @@ function handleNav(e){
   const id=this.getAttribute('href').replace('#','');
   const el=document.getElementById(id);
   if(el){
-    e.preventDefault(); el.scrollIntoView({behavior:'smooth'});
+    e.preventDefault();
+    el.scrollIntoView({behavior:'smooth'});
     if(isOpen){
-      setTimeout(()=>{ menu.classList.add('closing'); setTimeout(()=>{ menu.setAttribute('hidden',''); menu.classList.remove('closing'); isOpen=false; }, 230); }, 260);
+      setTimeout(()=>{
+        menu.classList.add('closing');
+        setTimeout(()=>{ menu.setAttribute('hidden',''); menu.classList.remove('closing'); isOpen=false; }, 230);
+      }, 260);
     }
   }
 }
@@ -40,13 +44,16 @@ const y=document.getElementById('year'); if(y) y.textContent=(new Date).getFullY
   const url=new URL(location.href); const initial=url.searchParams.get('cat')||'all'; apply(chips.some(c=>c.dataset.cat===initial)?initial:'all');
 })();
 
-// Google Sheets submit
+// Google Sheets submit + package selection
 (function(){
   const form=document.getElementById('leadFormSheets'); if(!form) return; const msg=document.getElementById('formMsg');
   const ENDPOINT='https://script.google.com/macros/s/AKfycbykPdxDbPJmT48ZwSjYAqFNq41m4D0-mw18gNih2fskZBNsAfD5c7j4X7ADL0EYFppN/exec';
-  // Package buttons choose value
-  document.querySelectorAll('[data-plan]').forEach(btn=>btn.addEventListener('click',()=>{ const sel=document.getElementById('packageSelect'); if(sel) sel.value=btn.getAttribute('data-plan'); }));
-  form.addEventListener('submit', async (e)=>{ e.preventDefault(); const fd=new FormData(form); const payload=Object.fromEntries(fd.entries()); payload.source_url=location.href; msg.textContent='שולח...';
+  // Fill package from any CTA with data-plan
+  document.querySelectorAll('[data-plan]').forEach(btn=>btn.addEventListener('click',()=>{
+    const sel=document.getElementById('packageSelect'); if(sel) sel.value=btn.getAttribute('data-plan');
+  }));
+  form.addEventListener('submit', async (e)=>{
+    e.preventDefault(); const fd=new FormData(form); const payload=Object.fromEntries(fd.entries()); payload.source_url=location.href; msg.textContent='שולח...';
     try{ await fetch(ENDPOINT,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}); msg.textContent='הטופס נשלח! ניצור קשר בהקדם.'; form.reset(); }
     catch(err){ msg.textContent='שגיאה בשליחה. אפשר לנסות שוב או ליצור קשר בוואטסאפ.'; }
   });
