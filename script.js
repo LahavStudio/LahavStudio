@@ -63,14 +63,47 @@
 // Year
 const y=document.getElementById('year'); if(y) y.textContent=(new Date).getFullYear();
 
-// Category chips filter
+
+
+// v5.0.6 — Gallery category chips: robust delegation + URL sync + smooth scroll
 (function(){
-  const chips=Array.from(document.querySelectorAll('.cat-inner .chip'));
-  const items=Array.from(document.querySelectorAll('.g-item'));
-  if(chips.length===0||items.length===0) return;
-  function apply(cat){ chips.forEach(c=>c.classList.toggle('active', c.dataset.cat===cat)); items.forEach(it=>{ const k=it.dataset.cat||'all'; it.style.display=(cat==='all'||k===cat)?'':'none'; }); }
-  chips.forEach(chip=> chip.addEventListener('click', ()=>{ const cat=chip.dataset.cat||'all'; apply(cat); const url=new URL(location.href); url.searchParams.set('cat',cat); history.replaceState(null,'',url.toString()); const g=document.getElementById('gallery'); if(g) g.scrollIntoView({behavior:'smooth'}); }));
-  const url=new URL(location.href); const initial=url.searchParams.get('cat')||'all'; apply(chips.some(c=>c.dataset.cat===initial)?initial:'all');
+  const wrap = document.querySelector('.cat-inner');
+  const gallery = document.getElementById('gallery');
+  const items = Array.from(document.querySelectorAll('.g-item'));
+  const chips = Array.from(document.querySelectorAll('.cat-inner .chip'));
+  if(!wrap || items.length===0 || chips.length===0) return;
+
+  function apply(cat){
+    chips.forEach(c=>{
+      const active = (c.dataset.cat===cat);
+      c.classList.toggle('active', active);
+      c.setAttribute('aria-pressed', active ? 'true' : 'false');
+    });
+    items.forEach(it=>{
+      const k = it.dataset.cat || 'all';
+      it.style.display = (cat==='all' || k===cat) ? '' : 'none';
+    });
+  }
+
+  // Init from URL
+  const url = new URL(location.href);
+  let current = url.searchParams.get('cat') || 'all';
+  if(!chips.some(c=>c.dataset.cat===current)) current = 'all';
+  apply(current);
+
+  // Delegate clicks
+  wrap.addEventListener('click', (e)=>{
+    const btn = e.target.closest('.chip');
+    if(!btn) return;
+    e.preventDefault();
+    const cat = btn.dataset.cat || 'all';
+    current = cat;
+    apply(cat);
+    const u = new URL(location.href);
+    u.searchParams.set('cat', cat);
+    history.replaceState(null,'',u.toString());
+    if(gallery) gallery.scrollIntoView({behavior:'smooth'});
+  }, {passive:false});
 })();
 
 // Google Sheets submit + package selection

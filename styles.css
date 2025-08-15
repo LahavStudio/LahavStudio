@@ -172,3 +172,8 @@ section{ scroll-margin-top: 96px }
 .footer-inner{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap }
 .whatsapp-fab{ position:fixed; z-index:65; bottom:16px; inset-inline-end:16px; display:flex; align-items:center; gap:8px; padding:.8rem 1rem; border-radius:999px; background:#25D366; color:#fff; text-decoration:none; box-shadow:var(--shadow) }
 @media (min-width:900px){ .whatsapp-fab{ bottom:24px } }
+
+/* v5.0.6 — gallery category bar not sticky */
+.cat-wrap{ position:static !important; top:auto !important; }
+/* Ensure chips look clickable */
+.cat-inner .chip{ cursor:pointer }
