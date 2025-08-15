@@ -1,5 +1,5 @@
 
-// ===== v5.0.8 — Hamburger controller (stagger IN, reverse stagger OUT, clickable links) =====
+// ===== v5.0.9 — Hamburger controller (stagger IN, reverse stagger OUT, clickable links) =====
 (function(){
   const hamb = document.querySelector('.hamburger');
   const menu = document.querySelector('.mobile-menu');
@@ -15,26 +15,29 @@
     menu.removeAttribute('hidden');
     menu.classList.remove('closing');
     menu.classList.add('opening');
+    // Let the staggered 'itemIn' play; then set .open
     setTimeout(()=>{
       menu.classList.remove('opening');
-      menu.classList.add('open'); // links stay visible & clickable after opening
+      menu.classList.add('open'); // links visible/clickable
       isAnimating = false; isOpen = true;
       hamb.setAttribute('aria-expanded','true');
-    }, 350); // 150ms max delay + ~200ms anim
+    }, 350);
   }
 
   function closeMenu(){
     if(isAnimating || !isOpen) return;
     isAnimating = true;
+    // Keep .open so items start at opacity:1; add .closing to trigger reverse-stagger out
     menu.classList.remove('opening');
-    menu.classList.remove('open');   // allow reverse-stagger OUT
     menu.classList.add('closing');
     hamb.setAttribute('aria-expanded','false');
+    // After animation completes, hide and cleanup (.open removed here)
     setTimeout(()=>{
       menu.setAttribute('hidden','');
       menu.classList.remove('closing');
+      menu.classList.remove('open');
       isAnimating = false; isOpen = false;
-    }, 400); // 150ms max delay + ~220ms anim
+    }, 420); // 150ms max delay + ~220ms anim + buffer
   }
 
   hamb.addEventListener('click',(e)=>{
@@ -42,7 +45,7 @@
     if(isOpen){ closeMenu(); } else { openMenu(); }
   }, {passive:false});
 
-  // Click inside the menu: smooth-scroll and close with animation
+  // Click inside menu -> smooth-scroll + close
   menu.addEventListener('click', (e)=>{
     const a = e.target.closest('a');
     if(!a) return;
@@ -58,7 +61,7 @@
   // ESC closes
   document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') closeMenu(); });
 
-  // Defensive: clean state on load
+  // Defensive init
   if(menu.hasAttribute('hidden')){ menu.classList.remove('open','opening','closing'); }
 })();
 

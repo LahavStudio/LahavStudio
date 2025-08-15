@@ -91,7 +91,7 @@ header,main,footer,.whatsapp-fab{ position:relative; z-index:1 }
 .mobile-menu.closing a:nth-child(5){ animation-delay:.03s }
 
 /* Keep visible & clickable only when fully open (not during opening/closing) */
-.mobile-menu.open:not(.opening):not(.closing) .row a{ opacity:1; transform:none; pointer-events:auto }
+.mobile-menu.open .row a{ opacity:1; transform:none; pointer-events:auto }
 .mobile-menu.open{ pointer-events:auto }
 
 /* Buttons */
@@ -213,7 +213,7 @@ section{ scroll-margin-top: 96px }
 @keyframes menuItemOut{ to{ opacity:0; transform:translateY(-8px) } }
 
 /* Keep links visible & clickable only when fully open (after opening animation) */
-.mobile-menu.open:not(.opening):not(.closing) .row a{ opacity:1; transform:none; pointer-events:auto }
+.mobile-menu.open .row a{ opacity:1; transform:none; pointer-events:auto }
 .mobile-menu.open{ pointer-events:auto }
 .mobile-menu[hidden]{ display:none !important }
 
