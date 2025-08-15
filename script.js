@@ -1,8 +1,13 @@
-// v5.0.5b — robust hamburger: staggered open, reverse stagger close, clickable links
+
+// v5.0.7 — single-source hamburger controller (stagger open, reverse stagger close, clickable links)
 (function(){
   const hamb = document.querySelector('.hamburger');
   const menu = document.querySelector('.mobile-menu');
   if(!hamb || !menu) return;
+  // Prevent double init
+  if(menu.dataset.menuInit === '1') return;
+  menu.dataset.menuInit = '1';
+
   let isOpen = false, isAnimating = false;
 
   function openMenu(){
@@ -13,7 +18,7 @@
     menu.classList.add('opening');
     setTimeout(()=>{
       menu.classList.remove('opening');
-      menu.classList.add('open'); // keep visible & clickable
+      menu.classList.add('open');
       isAnimating = false; isOpen = true;
       hamb.setAttribute('aria-expanded','true');
     }, 350);
@@ -23,22 +28,22 @@
     if(isAnimating || !isOpen) return;
     isAnimating = true;
     menu.classList.remove('opening');
-    menu.classList.remove('open');       // allow itemOut reverse stagger
+    menu.classList.remove('open');   // enable itemOut animation
     menu.classList.add('closing');
     hamb.setAttribute('aria-expanded','false');
     setTimeout(()=>{
       menu.setAttribute('hidden','');
       menu.classList.remove('closing');
       isAnimating = false; isOpen = false;
-    }, 400); // 150ms delay + 220ms anim ~= 370ms
+    }, 400); // 150ms max delay + 220ms itemOut
   }
 
-  hamb.addEventListener('click', (e)=>{
+  hamb.addEventListener('click',(e)=>{
     e.preventDefault(); e.stopPropagation();
     if(isOpen){ closeMenu(); } else { openMenu(); }
   }, {passive:false});
 
-  // Click on links -> smooth scroll + close
+  // Make menu links clickable + smooth scroll + close with animation
   menu.addEventListener('click', (e)=>{
     const a = e.target.closest('a');
     if(!a) return;
@@ -51,14 +56,13 @@
     }
   });
 
-  // ESC to close
   document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') closeMenu(); });
 
   // Clean state on load
-  document.addEventListener('DOMContentLoaded', ()=>{
-    if(menu.hasAttribute('hidden')){ menu.classList.remove('open','opening','closing'); }
-  });
+  if(menu.hasAttribute('hidden')){ menu.classList.remove('open','opening','closing'); }
 })();
+
+// v5.0.5b — robust hamburger: staggered open, reverse stagger close, clickable links
 
 // Year
 const y=document.getElementById('year'); if(y) y.textContent=(new Date).getFullYear();
