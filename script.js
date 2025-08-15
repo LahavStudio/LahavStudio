@@ -1,43 +1,57 @@
 
-// ===== v5.0.9 — Hamburger controller (stagger IN, reverse stagger OUT, clickable links) =====
+// ===== v5.1.0 — Deterministic hamburger (stagger IN/OUT via JS), links clickable =====
 (function(){
   const hamb = document.querySelector('.hamburger');
   const menu = document.querySelector('.mobile-menu');
   if(!hamb || !menu) return;
-  if(menu.dataset.menuInit === '1') return; // avoid double init
+  if(menu.dataset.menuInit === '1') return;
   menu.dataset.menuInit = '1';
 
   let isOpen = false, isAnimating = false;
+  const items = Array.from(menu.querySelectorAll('.row a'));
+  const inDur = 280, outDur = 220, gap = 30; // ms
+
+  function animateIn(){
+    items.forEach((a,i)=>{
+      a.style.opacity = '0';
+      a.style.transform = 'translateY(-8px)';
+      a.style.animation = 'none';
+      // force reflow
+      void a.offsetWidth;
+      a.style.animation = `menuItemIn ${inDur}ms ease forwards`;
+      a.style.animationDelay = `${(i+1)*gap}ms`;
+    });
+  }
+  function animateOut(){
+    items.slice().reverse().forEach((a,idx)=>{
+      a.style.animation = 'none';
+      void a.offsetWidth;
+      a.style.animation = `menuItemOut ${outDur}ms ease forwards`;
+      a.style.animationDelay = `${(idx+1)*gap}ms`;
+    });
+  }
 
   function openMenu(){
     if(isAnimating || isOpen) return;
     isAnimating = true;
     menu.removeAttribute('hidden');
     menu.classList.remove('closing');
-    menu.classList.add('opening');
-    // Let the staggered 'itemIn' play; then set .open
-    setTimeout(()=>{
-      menu.classList.remove('opening');
-      menu.classList.add('open'); // links visible/clickable
-      isAnimating = false; isOpen = true;
-      hamb.setAttribute('aria-expanded','true');
-    }, 350);
+    menu.classList.add('open'); // make links clickable immediately
+    animateIn();
+    const total = (items.length*gap) + inDur + 50;
+    setTimeout(()=>{ isAnimating=false; isOpen=true; hamb.setAttribute('aria-expanded','true'); }, total);
   }
 
   function closeMenu(){
     if(isAnimating || !isOpen) return;
     isAnimating = true;
-    // Keep .open so items start at opacity:1; add .closing to trigger reverse-stagger out
-    menu.classList.remove('opening');
-    menu.classList.add('closing');
-    hamb.setAttribute('aria-expanded','false');
-    // After animation completes, hide and cleanup (.open removed here)
+    animateOut();
+    const total = (items.length*gap) + outDur + 50;
     setTimeout(()=>{
       menu.setAttribute('hidden','');
-      menu.classList.remove('closing');
-      menu.classList.remove('open');
-      isAnimating = false; isOpen = false;
-    }, 420); // 150ms max delay + ~220ms anim + buffer
+      isAnimating=false; isOpen=false;
+      hamb.setAttribute('aria-expanded','false');
+    }, total);
   }
 
   hamb.addEventListener('click',(e)=>{
@@ -45,7 +59,7 @@
     if(isOpen){ closeMenu(); } else { openMenu(); }
   }, {passive:false});
 
-  // Click inside menu -> smooth-scroll + close
+  // Click inside the menu => smooth-scroll + close
   menu.addEventListener('click', (e)=>{
     const a = e.target.closest('a');
     if(!a) return;
@@ -60,9 +74,6 @@
 
   // ESC closes
   document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') closeMenu(); });
-
-  // Defensive init
-  if(menu.hasAttribute('hidden')){ menu.classList.remove('open','opening','closing'); }
 })();
 
 

@@ -220,3 +220,12 @@ section{ scroll-margin-top: 96px }
 /* Put menu above everything to avoid overlay issues */
 .mobile-menu{ z-index: 9999 !important }
 .mobile-menu .row a{ cursor:pointer; display:inline-block }
+
+/* v5.1.0 overrides */
+.cat-wrap { position: static !important; top: auto !important; }
+.mobile-menu{ z-index:9999 !important }
+.mobile-menu.open .row a{ opacity:1; transform:none; pointer-events:auto }
+.mobile-menu[hidden]{ display:none !important }
+.mobile-menu .row a{ cursor:pointer; display:inline-block }
+@keyframes menuItemIn{ to{ opacity:1; transform:none } }
+@keyframes menuItemOut{ to{ opacity:0; transform:translateY(-8px) } }
