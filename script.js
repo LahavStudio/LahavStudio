@@ -1,6 +1,5 @@
-/* Lahav Studio v5.1.0 — Mobile menu animations + clickable links hotfix */
 
-/* ========== HAMBURGER (deterministic stagger) ========== */
+// ===== v5.1.0 — Deterministic hamburger (stagger IN/OUT via JS), links clickable =====
 (function(){
   const hamb = document.querySelector('.hamburger');
   const menu = document.querySelector('.mobile-menu');
@@ -12,28 +11,17 @@
   const items = Array.from(menu.querySelectorAll('.row a'));
   const inDur = 280, outDur = 220, gap = 30; // ms
 
-  function ensureClickable(){
-    // Protect against CSS that disables clicks
-    menu.style.zIndex = '9999';
-    menu.style.pointerEvents = 'auto';
-    items.forEach(a=>{
-      a.style.pointerEvents = 'auto';
-      a.style.cursor = 'pointer';
-    });
-  }
-
   function animateIn(){
-    ensureClickable();
     items.forEach((a,i)=>{
       a.style.opacity = '0';
       a.style.transform = 'translateY(-8px)';
       a.style.animation = 'none';
-      void a.offsetWidth; // reflow
+      // force reflow
+      void a.offsetWidth;
       a.style.animation = `menuItemIn ${inDur}ms ease forwards`;
       a.style.animationDelay = `${(i+1)*gap}ms`;
     });
   }
-
   function animateOut(){
     items.slice().reverse().forEach((a,idx)=>{
       a.style.animation = 'none';
@@ -58,7 +46,7 @@
     if(isAnimating || !isOpen) return;
     isAnimating = true;
     animateOut();
-    const total = (items.length*gap) + outDur + 60;
+    const total = (items.length*gap) + outDur + 50;
     setTimeout(()=>{
       menu.setAttribute('hidden','');
       isAnimating=false; isOpen=false;
@@ -71,54 +59,74 @@
     if(isOpen){ closeMenu(); } else { openMenu(); }
   }, {passive:false});
 
-  // Make each link perform native anchor + close the menu
-  items.forEach(a=>{
-    a.addEventListener('click', function(){
-      // allow default browser behavior (#anchor scroll), then close
-      setTimeout(closeMenu, 60);
-    }, {passive:true});
+  // Click inside the menu => smooth-scroll + close
+  menu.addEventListener('click', (e)=>{
+    const a = e.target.closest('a');
+    if(!a) return;
+    const href = a.getAttribute('href') || '';
+    if(href.startsWith('#')){
+      const id = href.slice(1);
+      const el = document.getElementById(id);
+      if(el){ e.preventDefault(); el.scrollIntoView({behavior:'smooth'}); }
+      closeMenu();
+    }
   });
 
   // ESC closes
   document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') closeMenu(); });
 })();
 
-/* ========== KEYFRAMES (in case they are missing in CSS, harmless if duplicated) ========== */
-(function(){
-  const id = 'menu-keyframes-fallback';
-  if(document.getElementById(id)) return;
-  const style = document.createElement('style');
-  style.id = id;
-  style.textContent = `
-  @keyframes menuItemIn{ to{ opacity:1; transform:none } }
-  @keyframes menuItemOut{ to{ opacity:0; transform:translateY(-8px) } }
-  `;
-  document.head.appendChild(style);
-})();
 
-/* ========== GALLERY CHIPS (leave as-is if already implemented; safe fallback) ========== */
+// v5.0.7 — single-source hamburger controller (stagger open, reverse stagger close, clickable links)
+// v5.0.5b — robust hamburger: staggered open, reverse stagger close, clickable links
+
+// Year
+const y=document.getElementById('year'); if(y) y.textContent=(new Date).getFullYear();
+
+
+
+// v5.0.6 — Gallery category chips: robust delegation + URL sync + smooth scroll
 (function(){
   const wrap = document.querySelector('.cat-inner');
+  const gallery = document.getElementById('gallery');
   const items = Array.from(document.querySelectorAll('.g-item'));
   const chips = Array.from(document.querySelectorAll('.cat-inner .chip'));
   if(!wrap || items.length===0 || chips.length===0) return;
+
   function apply(cat){
-    chips.forEach(c=>c.classList.toggle('active', c.dataset.cat===cat));
-    items.forEach(it=>{ const k=it.dataset.cat||'all'; it.style.display=(cat==='all'||k===cat)?'':'none'; });
+    chips.forEach(c=>{
+      const active = (c.dataset.cat===cat);
+      c.classList.toggle('active', active);
+      c.setAttribute('aria-pressed', active ? 'true' : 'false');
+    });
+    items.forEach(it=>{
+      const k = it.dataset.cat || 'all';
+      it.style.display = (cat==='all' || k===cat) ? '' : 'none';
+    });
   }
-  const url=new URL(location.href);
+
+  // Init from URL
+  const url = new URL(location.href);
   let current = url.searchParams.get('cat') || 'all';
-  if(!chips.some(c=>c.dataset.cat===current)) current='all';
+  if(!chips.some(c=>c.dataset.cat===current)) current = 'all';
   apply(current);
-  wrap.addEventListener('click',(e)=>{
-    const btn=e.target.closest('.chip'); if(!btn) return;
-    const cat=btn.dataset.cat||'all'; apply(cat);
-    const u=new URL(location.href); u.searchParams.set('cat',cat); history.replaceState(null,'',u.toString());
-    document.getElementById('gallery')?.scrollIntoView({behavior:'smooth'});
+
+  // Delegate clicks
+  wrap.addEventListener('click', (e)=>{
+    const btn = e.target.closest('.chip');
+    if(!btn) return;
+    e.preventDefault();
+    const cat = btn.dataset.cat || 'all';
+    current = cat;
+    apply(cat);
+    const u = new URL(location.href);
+    u.searchParams.set('cat', cat);
+    history.replaceState(null,'',u.toString());
+    if(gallery) gallery.scrollIntoView({behavior:'smooth'});
   }, {passive:false});
 })();
 
-/* ========== GOOGLE SHEETS (leave as-is if already implemented; safe fallback) ========== */
+// Google Sheets submit + package selection
 (function(){
   const form=document.getElementById('leadFormSheets'); if(!form) return; const msg=document.getElementById('formMsg');
   const ENDPOINT='https://script.google.com/macros/s/AKfycbykPdxDbPJmT48ZwSjYAqFNq41m4D0-mw18gNih2fskZBNsAfD5c7j4X7ADL0EYFppN/exec';
@@ -126,11 +134,8 @@
     const sel=document.getElementById('packageSelect'); if(sel) sel.value=btn.getAttribute('data-plan');
   }));
   form.addEventListener('submit', async (e)=>{
-    e.preventDefault(); const fd=new FormData(form); const payload=Object.fromEntries(fd.entries()); payload.source_url=location.href; if(msg) msg.textContent='שולח...';
-    try{ await fetch(ENDPOINT,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}); if(msg) msg.textContent='הטופס נשלח! ניצור קשר בהקדם.'; form.reset(); }
-    catch(err){ if(msg) msg.textContent='שגיאה בשליחה. אפשר לנסות שוב או ליצור קשר בוואטסאפ.'; }
+    e.preventDefault(); const fd=new FormData(form); const payload=Object.fromEntries(fd.entries()); payload.source_url=location.href; msg.textContent='שולח...';
+    try{ await fetch(ENDPOINT,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}); msg.textContent='הטופס נשלח! ניצור קשר בהקדם.'; form.reset(); }
+    catch(err){ msg.textContent='שגיאה בשליחה. אפשר לנסות שוב או ליצור קשר בוואטסאפ.'; }
   });
 })();
-
-/* ========== YEAR ========== */
-(()=>{ const y=document.getElementById('year'); if(y) y.textContent=(new Date).getFullYear(); })();
