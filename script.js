@@ -141,33 +141,15 @@ const y=document.getElementById('year'); if(y) y.textContent=(new Date).getFullY
 })();
 
 
-// v5.1.0d — ensure hamburger items are anchors with big hit-area; close after navigation
+// v5.2.0 — smooth-scroll for always-visible header nav (no hamburger)
 (function(){
-  const menu = document.querySelector('.mobile-menu'); if(!menu) return;
-  const row = menu.querySelector('.row') || menu;
-
-  const map = { 'בית':'home', 'שירותים':'services', 'חבילות':'packages', 'גלריה':'gallery', 'דברו איתי':'contact' };
-
-  // Turn non-anchors into anchors mapped by label
-  Array.from(row.children).forEach(el=>{
-    if(el.nodeType!==1) return;
-    if(el.tagName==='A') return;
-    const label = (el.textContent||'').trim();
-    const id = map[label] || 'home';
-    const a = document.createElement('a');
-    a.href = '#' + id;
-    a.className = (el.className? el.className + ' ' : '') + 'menu-link';
-    a.innerHTML = el.innerHTML; // keep styling
-    el.replaceWith(a);
-  });
-
-  // Add click handler: native anchor scroll, then close menu (keeps exit animation)
-  const links = Array.from(row.querySelectorAll('a'));
-  links.forEach(a=>{
-    a.addEventListener('click', function(){
-      if(typeof window.closeMenu === 'function'){
-        setTimeout(()=>window.closeMenu(/*force*/true), 80);
-      }
-    }, {passive:true});
+  const nav = document.querySelector('.main-nav');
+  if(!nav) return;
+  nav.querySelectorAll('a[href^="#"]').forEach(a=>{
+    a.addEventListener('click', (e)=>{
+      const id = a.getAttribute('href').slice(1);
+      const el = document.getElementById(id);
+      if(el){ e.preventDefault(); el.scrollIntoView({behavior:'smooth'}); }
+    }, {passive:false});
   });
 })();

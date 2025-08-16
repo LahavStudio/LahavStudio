@@ -230,14 +230,34 @@ section{ scroll-margin-top: 96px }
 @keyframes menuItemIn{ to{ opacity:1; transform:none } }
 @keyframes menuItemOut{ to{ opacity:0; transform:translateY(-8px) } }
 
-/* v5.1.0d — enlarge tappable area of hamburger items (no animation change) */
-.mobile-menu{ z-index:9999 !important; pointer-events:auto !important }
-.mobile-menu *{ pointer-events:auto !important }
-.mobile-menu .row{ display:flex; flex-wrap:wrap; gap:10px 14px; justify-content:space-between }
-.mobile-menu .row a{
-  display:block; padding:12px 18px; border-radius:14px;
-  background:rgba(255,255,255,0.08); text-decoration:none; color:inherit;
-  -webkit-tap-highlight-color: rgba(0,0,0,0.2);
-  pointer-events:auto !important;
+
+/* ===== v5.2.0 — Always-visible nav (no logo, no hamburger), centered across header ===== */
+.logo, .hamburger, .mobile-menu { display:none !important }
+
+/* Make the single nav live inside the glass header bar, centered horizontally */
+.main-nav{
+  position:absolute; inset-inline:12px; top:50%; transform:translateY(-50%);
+  display:flex; align-items:center; justify-content:space-between; gap:clamp(6px,2vw,16px);
 }
-.mobile-menu .row a:active{ background:rgba(255,255,255,0.14) }
+
+/* Links are bold, with larger hit-area for mobile taps */
+.main-nav a{
+  display:inline-block; padding:10px 12px; border-radius:12px; text-decoration:none; font-weight:900;
+  white-space:nowrap;
+}
+.main-nav a:hover,.main-nav a:focus-visible{ background:rgba(255,255,255,.85); outline:none }
+
+/* Desktop: center the row across the entire header bar */
+@media (min-width: 900px){
+  .main-nav{ justify-content:center; gap:24px }
+  .main-nav a{ padding:10px 14px }
+}
+
+/* Mobile: distribute items equally across the bar */
+@media (max-width: 899px){
+  .header-bar{ padding:0 12px }
+  .main-nav{ justify-content:space-between }
+  .main-nav a{ padding:12px 8px; text-align:center }
+}
+
+/* Keep the header glass as-is; no sticky changes */
