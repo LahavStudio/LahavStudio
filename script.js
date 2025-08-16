@@ -240,3 +240,17 @@ document.querySelectorAll('.top-nav .nav-link').forEach(a=>{
     }
   }, {passive:false});
 });
+
+
+// v5.3: populate guests select (50..1000 step 50)
+document.addEventListener('DOMContentLoaded', () => {
+  const guestsSelect = document.getElementById('guests');
+  if (guestsSelect && !guestsSelect.options.length) {
+    for (let n = 50; n <= 1000; n += 50) {
+      const opt = document.createElement('option');
+      opt.value = String(n);
+      opt.textContent = n.toLocaleString('he-IL');
+      guestsSelect.appendChild(opt);
+    }
+  }
+});
