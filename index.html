@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#3b1dff"/>
   <title>להב סטודיו — צילום מגנטים לאירועים</title>
   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=522wf"/>
+  <link rel="stylesheet" href="styles.css?v=522wf2"/>
 </head>
 <body>
   <header class="site-header">
@@ -107,7 +107,7 @@
     <section id="contact" class="section">
       <div class="container">
         <h2>דברו איתי</h2>
-        <form class="contact-form" id="leadFormSheets" onsubmit="return false;" method="GET" action="https://api.whatsapp.com/send">
+        <form class="contact-form" id="leadFormSheets" onsubmit="return false;" id="leadFormSheets" method="GET" action="https://api.whatsapp.com/send" onsubmit="buildWA(this)">
 <input type="hidden" name="phone" value="972532799664">
 <input type="hidden" name="text" value="">
 
@@ -131,11 +131,11 @@
           </label>
           <label>הודעה<textarea name="msg" rows="4" placeholder="ספרו לי בקצרה על האירוע"></textarea></label>
           <div class="row actions">
-            
+            <button type="submit" class="btn primary" id="submitBtn">שליחה</button>
             <a class="btn ghost" href="mailto:hello@example.com">או שלחו מייל</a>
           </div>
-          <p class="fine" id="formMsg">בלחיצה על שליחה אצור קשר בהקדם. ניתן גם בWhatsApp ↓</p>
-        <button type="submit" class="btn primary">שליחה</button></form>
+          <p class="fine" id="formMsg">בלחיצה על שליחה אצור קשר בהקדם. ניתן גם בוואטסאפ ↓</p>
+        </form>
       </div>
     </section>
   </main>
@@ -151,8 +151,35 @@
     </div>
   </footer>
 
-  <a class="whatsapp-fab" href="https://wa.me/972532799664" target="_blank" rel="noopener">WhatsApp</a>
+  <a class="whatsapp-fab" href="https://wa.me/972000000000" target="_blank" rel="noopener">WhatsApp</a>
 
-  <script src="script.js?v=522wf" defer defer defer></script>
+  <script src="script.js?v=522wf2" defer defer defer></script>
+
+<script id="wa-inline-builder">
+function buildWA(form){
+  try{
+    var g = function(n){ var el=form.querySelector('[name="'+n+'"]'); return el?String(el.value||'').trim() : ''; };
+    var parts = [];
+    var name = g('name');
+    parts.push('היי, זה ' + (name || 'לקוח') + ' מהאתר "להב סטודיו" ✨');
+    var phone = g('phone'); if (phone) parts.push('טלפון: ' + phone);
+    var d = g('date'); if (d) parts.push('תאריך האירוע: ' + d);
+    var t = g('type'); if (t) parts.push('סוג האירוע: ' + t);
+    var p = g('package'); if (p) parts.push('חבילה: ' + p);
+    var note = g('msg'); if (note) parts.push('הודעה: ' + note);
+    parts.push('קישור לעמוד: ' + location.href);
+    var text = parts.join('
+');
+    var hidden = form.querySelector('input[name="text"]');
+    if (!hidden){ hidden = document.createElement('input'); hidden.type='hidden'; hidden.name='text'; form.appendChild(hidden); }
+    hidden.value = text;
+  }catch(e){
+    console.error('WA compose failed', e);
+  }
+  // return true -> allow native form GET navigation
+  return true;
+}
+</script>
+
 </body>
 </html>

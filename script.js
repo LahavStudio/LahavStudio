@@ -133,7 +133,7 @@ const y=document.getElementById('year'); if(y) y.textContent=(new Date).getFullY
   document.querySelectorAll('[data-plan]').forEach(btn=>btn.addEventListener('click',()=>{
     const sel=document.getElementById('packageSelect'); if(sel) sel.value=btn.getAttribute('data-plan');
   }));
-  const fd=new FormData(form); const payload=Object.fromEntries(fd.entries()); payload.source_url=location.href; msg.textContent='שולח...';
+   const fd=new FormData(form); const payload=Object.fromEntries(fd.entries()); payload.source_url=location.href; msg.textContent='שולח...';
     try{ await fetch(ENDPOINT,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}); msg.textContent='הטופס נשלח! ניצור קשר בהקדם.'; form.reset(); }
     catch(err){ msg.textContent='שגיאה בשליחה. אפשר לנסות שוב או ליצור קשר בוואטסאפ.'; }
   });
@@ -151,46 +151,4 @@ const y=document.getElementById('year'); if(y) y.textContent=(new Date).getFullY
       if(el){ e.preventDefault(); el.scrollIntoView({behavior:'smooth'}); }
     }, {passive:false});
   });
-})();
-
-
-
-
-
-
-
-
-
-
-
-
-// v5.2.2-whatsapp-form — build WhatsApp message and let the form submit (GET)
-(function(){
-  const form = document.getElementById('leadFormSheets') || document.querySelector('section#contact form');
-  if (!form) return;
-  // ensure hidden inputs exist
-  let phoneHidden = form.querySelector('input[name="phone"]');
-  let textHidden  = form.querySelector('input[name="text"]');
-  if (!phoneHidden) { phoneHidden = document.createElement('input'); phoneHidden.type='hidden'; phoneHidden.name='phone'; form.prepend(phoneHidden); }
-  if (!textHidden)  { textHidden  = document.createElement('input'); textHidden.type='hidden';  textHidden.name='text';  form.prepend(textHidden); }
-  phoneHidden.value = '972532799664';
-
-  function val(n){ const el = form.querySelector(`[name="${n}"]`); return el ? String(el.value||'').trim() : ''; }
-  function compose(){
-    const name = val('name'), phone = val('phone'), date = val('date'), typ = val('type'), pack = val('package'), note = val('msg');
-    const parts = [];
-    parts.push(`היי, זה ${name || 'לקוח'} מהאתר "להב סטודיו" ✨`);
-    if (phone) parts.push(`טלפון: ${phone}`);
-    if (date)  parts.push(`תאריך האירוע: ${date}`);
-    if (typ)   parts.push(`סוג האירוע: ${typ}`);
-    if (pack)  parts.push(`חבילה: ${pack}`);
-    if (note)  parts.push(`הודעה: ${note}`);
-    parts.push(`קישור לעמוד: ${location.href}`);
-    return parts.join('\n');
-  }
-
-  form.addEventListener('submit', function(){
-    // let the browser encode the GET query; just place plain text
-    textHidden.value = compose();
-  }, {passive:true});
 })();
