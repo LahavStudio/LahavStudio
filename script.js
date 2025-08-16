@@ -153,3 +153,33 @@ const y=document.getElementById('year'); if(y) y.textContent=(new Date).getFullY
     }, {passive:false});
   });
 })();
+
+
+// v5.2.2-sheets — Contact form → Google Sheets (JSON POST)
+(function(){
+  const SHEETS_ENDPOINT = "https://script.google.com/macros/s/AKfycbykPdxDbPJmT48ZwSjYAqFNq41m4D0-mw18gNih2fskZBNsAfD5c7j4X7ADL0EYFppN/exec";
+  const form = document.getElementById('leadFormSheets');
+  const msg  = document.getElementById('formMsg');
+  if(!form) return;
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fd = new FormData(form);
+    const payload = Object.fromEntries(fd.entries());
+    payload.source_url = location.href;
+    payload.ua = navigator.userAgent;
+    try {
+      if (msg) msg.textContent = 'שולח...';
+      await fetch(SHEETS_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (msg) msg.textContent = 'הטופס נשלח! ניצור קשר בהקדם.';
+      form.reset();
+    } catch(err) {
+      if (msg) msg.textContent = 'שגיאה בשליחה. אפשר לנסות שוב או ליצור קשר בוואטסאפ.';
+      console.error('Sheets submit error:', err);
+    }
+  });
+})();
