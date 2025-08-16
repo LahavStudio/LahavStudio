@@ -126,43 +126,30 @@ const y=document.getElementById('year'); if(y) y.textContent=(new Date).getFullY
   }, {passive:false});
 })();
 
-
-
-// v5.2.3 — Contact form → Google Sheets (JSON POST)
+// Google Sheets submit + package selection
 (function(){
-  const ENDPOINT = "https://script.google.com/macros/s/AKfycbykPdxDbPJmT48ZwSjYAqFNq41m4D0-mw18gNih2fskZBNsAfD5c7j4X7ADL0EYFppN/exec";
-  const form = document.getElementById('leadFormSheets');
-  const msg  = document.getElementById('formMsg');
-  if(!form) return;
-
-  // Optional: buttons that set the selected package
-  document.querySelectorAll('[data-plan]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const sel = document.getElementById('packageSelect') || form.querySelector('[name="package"]');
-      if (sel) sel.value = btn.getAttribute('data-plan');
-    });
+  const form=document.getElementById('leadFormSheets'); if(!form) return; const msg=document.getElementById('formMsg');
+  const ENDPOINT='https://script.google.com/macros/s/AKfycbykPdxDbPJmT48ZwSjYAqFNq41m4D0-mw18gNih2fskZBNsAfD5c7j4X7ADL0EYFppN/exec';
+  document.querySelectorAll('[data-plan]').forEach(btn=>btn.addEventListener('click',()=>{
+    const sel=document.getElementById('packageSelect'); if(sel) sel.value=btn.getAttribute('data-plan');
+  }));
+  form.addEventListener('submit', async (e)=>{
+    e.preventDefault(); const fd=new FormData(form); const payload=Object.fromEntries(fd.entries()); payload.source_url=location.href; msg.textContent='שולח...';
+    try{ await fetch(ENDPOINT,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}); msg.textContent='הטופס נשלח! ניצור קשר בהקדם.'; form.reset(); }
+    catch(err){ msg.textContent='שגיאה בשליחה. אפשר לנסות שוב או ליצור קשר בוואטסאפ.'; }
   });
+})();
 
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const fd = new FormData(form);
-    const payload = Object.fromEntries(fd.entries());
-    // Normalize common field names (keep your existing names)
-    payload.source_url = location.href;
-    payload.ua = navigator.userAgent;
-    try {
-      if (msg) msg.textContent = 'שולח...';
-      const res = await fetch(ENDPOINT, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      // Treat any network success as OK; Apps Script returns JSON normally
-      if (msg) msg.textContent = 'הטופס נשלח! ניצור קשר בהקדם.';
-      form.reset();
-    } catch(err) {
-      if (msg) msg.textContent = 'שגיאה בשליחה. אפשר לנסות שוב או ליצור קשר בוואטסאפ.';
-      console.error('Sheets submit error:', err);
-    }
+
+// v5.2.0 — smooth-scroll for always-visible header nav (no hamburger)
+(function(){
+  const nav = document.querySelector('.main-nav');
+  if(!nav) return;
+  nav.querySelectorAll('a[href^="#"]').forEach(a=>{
+    a.addEventListener('click', (e)=>{
+      const id = a.getAttribute('href').slice(1);
+      const el = document.getElementById(id);
+      if(el){ e.preventDefault(); el.scrollIntoView({behavior:'smooth'}); }
+    }, {passive:false});
   });
 })();
