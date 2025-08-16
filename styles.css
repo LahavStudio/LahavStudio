@@ -229,3 +229,15 @@ section{ scroll-margin-top: 96px }
 .mobile-menu .row a{ cursor:pointer; display:inline-block }
 @keyframes menuItemIn{ to{ opacity:1; transform:none } }
 @keyframes menuItemOut{ to{ opacity:0; transform:translateY(-8px) } }
+
+/* v5.1.0d — enlarge tappable area of hamburger items (no animation change) */
+.mobile-menu{ z-index:9999 !important; pointer-events:auto !important }
+.mobile-menu *{ pointer-events:auto !important }
+.mobile-menu .row{ display:flex; flex-wrap:wrap; gap:10px 14px; justify-content:space-between }
+.mobile-menu .row a{
+  display:block; padding:12px 18px; border-radius:14px;
+  background:rgba(255,255,255,0.08); text-decoration:none; color:inherit;
+  -webkit-tap-highlight-color: rgba(0,0,0,0.2);
+  pointer-events:auto !important;
+}
+.mobile-menu .row a:active{ background:rgba(255,255,255,0.14) }
