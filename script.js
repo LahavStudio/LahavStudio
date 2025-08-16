@@ -140,117 +140,36 @@ const y=document.getElementById('year'); if(y) y.textContent=(new Date).getFullY
   });
 })();
 
-
-// ===== v5.2.2 — WhatsApp redirect (capture-phase; overrides Sheets) =====
+// v5.3 — WhatsApp redirect with guests + options 50..1000
 (function(){
   const form = document.getElementById('leadFormSheets');
   if(!form) return;
-  const PHONE = '972532799664'; // יאן
-  function val(name){ const el=form.querySelector(`[name="${name}"]`); return el ? String(el.value||'').trim() : ''; }
-  function buildText(){
-    const name = val('name');
-    const phone= val('phone');
-    const date = val('event_date');
-    const type = val('event_type');
-    const pack = val('package');
-    const note = val('msg');
-    const lines = [];
-    lines.push(`היי, זה ${name || 'לקוח'} מהאתר להב סטודיו 📸`);
-    if (type || date) lines.push(`יש לי ${type || 'אירוע'} בתאריך ${date || '[תאריך]'} ואני מעוניין לשמוע עוד פרטים על חבילת ה-${pack || '[חבילה]'} 🎉`);
-    if (phone) lines.push(`זה מספר הפלאפון שלי: ${phone} 📱`);
-    if (note)  lines.push(`וחשוב לי שתדע על האירוע ש${note}`);
-    return lines.join('\
-');
+  const guestsSel = document.getElementById('guests');
+  if (guestsSel && !guestsSel.options.length){
+    for(let n=50;n<=1000;n+=50){
+      const opt=document.createElement('option'); opt.value=String(n); opt.textContent=n.toLocaleString('he-IL'); guestsSel.appendChild(opt);
+    }
+  }
+  function buildMsg(){
+    const get = (n)=> (form.querySelector(`[name="${n}"]`)||{}).value || '';
+    const name   = String(get('name')).trim();
+    const phone  = String(get('phone')).trim();
+    const date   = String(get('event_date')).trim();
+    const type   = String(get('event_type')).trim();
+    const pkg    = String(get('package')).trim();
+    const guests = String(get('guests')).trim();
+    const note   = String(get('msg')).trim();
+    const msg = `היי, זה ${name} מהאתר להב סטודיו 📸
+יש לי ${type} בתאריך ${date}
+כמות המוזמנים שלי היא: ${guests} 💃🏽
+ואני מעוניין לשמוע עוד פרטים על חבילת ה-${pkg} 🎉
+זה מספר הפלאפון שלי:${phone} 📱
+וחשוב לי שתדע על האירוע ש${note}`;
+    return msg;
   }
   form.addEventListener('submit', function(e){
-    // run before any other submit listeners:
     e.preventDefault(); e.stopImmediatePropagation();
-    const text = encodeURIComponent(buildText());
-    const url  = `https://api.whatsapp.com/send?phone=${PHONE}&text=${text}`;
-    window.location.href = url;
-  }, true); // capture-phase so it fires first
+    const url = 'https://api.whatsapp.com/send?phone=972532799664&text=' + encodeURIComponent(buildMsg());
+    setTimeout(()=>{ window.location.href = url; }, 0);
+  }, true);
 })();
-
-
-// v5.2.2-inlineWA (minimal) — turn the Send button into a real <a> link that updates live
-(function(){
-  const form = document.getElementById('leadFormSheets') || document.querySelector('#contact form');
-  const link = document.getElementById('waSend');
-  const PHONE = '972532799664';
-  if(!form || !link) return;
-
-  function val(n){ const el=form.querySelector(`[name="${n}"]`); return el ? String(el.value||'').trim() : ''; }
-
-  function buildText(){
-    const name = val('name');
-    const phone= val('phone');
-    const date = val('event_date');
-    const type = val('event_type');
-    const pack = val('package');
-    const note = val('msg');
-    const parts = [];
-    parts.push(`היי, זה ${name || 'לקוח'} מהאתר להב סטודיו 📸`);
-    parts.push(`יש לי ${type || 'אירוע'} בתאריך ${date || '[תאריך]'} ואני מעוניין לשמוע עוד פרטים על חבילת ה-${pack || '[חבילה]'} 🎉`);
-    if (phone) parts.push(`זה מספר הפלאפון שלי: ${phone} 📱`);
-    if (note)  parts.push(`וחשוב לי שתדע על האירוע ש${note}`);
-    return encodeURIComponent(parts.join('\
-'));
-  }
-
-  function update(){
-    const text = buildText();
-    // iOS/Safari is more consistent with api.whatsapp.com
-    const isiOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-    const base = (isiOS && isSafari) ? 'https://api.whatsapp.com/send' : `https://wa.me/${PHONE}`;
-    const url  = base.includes('api.whatsapp.com')
-      ? `${base}?phone=${PHONE}&text=${text}`
-      : `${base}?text=${text}`;
-    link.setAttribute('href', url);
-  }
-
-  form.addEventListener('input', update, {passive:true});
-  form.addEventListener('change', update, {passive:true});
-  update();
-})();
-
-// v5.2.2 navfix: remove old hamburger/menu if present
-(function(){
-  document.querySelectorAll('.hamburger, .mobile-menu, .header-bar .logo').forEach(el=>el.remove());
-})();
-// smooth scroll for top-nav links
-document.querySelectorAll('.top-nav .nav-link').forEach(a=>{
-  a.addEventListener('click', function(e){
-    const id = this.getAttribute('href');
-    if(id && id.startsWith('#')){
-      e.preventDefault();
-      document.querySelector(id)?.scrollIntoView({behavior:'smooth', block:'start'});
-    }
-  }, {passive:false});
-});
-
-
-// v5.2.2 navfix2: smooth scroll for header links
-document.querySelectorAll('.top-nav .nav-link').forEach(a=>{
-  a.addEventListener('click', (e)=>{
-    const id = a.getAttribute('href');
-    if(id && id.startsWith('#')){
-      e.preventDefault();
-      document.querySelector(id)?.scrollIntoView({behavior:'smooth', block:'start'});
-    }
-  }, {passive:false});
-});
-
-
-// v5.3: populate guests select (50..1000 step 50)
-document.addEventListener('DOMContentLoaded', () => {
-  const guestsSelect = document.getElementById('guests');
-  if (guestsSelect && !guestsSelect.options.length) {
-    for (let n = 50; n <= 1000; n += 50) {
-      const opt = document.createElement('option');
-      opt.value = String(n);
-      opt.textContent = n.toLocaleString('he-IL');
-      guestsSelect.appendChild(opt);
-    }
-  }
-});
