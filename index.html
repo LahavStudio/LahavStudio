@@ -6,19 +6,34 @@
   <meta name="theme-color" content="#3b1dff"/>
   <title>להב סטודיו — צילום מגנטים לאירועים</title>
   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=522"/>
+  <link rel="stylesheet" href="styles.css?v=523"/>
 </head>
 <body>
   <header class="site-header">
     <div class="container">
       <div class="header-bar">
-        <nav class="main-nav" aria-label="ראשי">
+        <a class="logo" href="#home" aria-label="Logo">
+          <img src="logo.png" alt="לוגו להב סטודיו" width="160" height="56"/>
+        </a>
+        <button class="hamburger" aria-label="פתח תפריט" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+        <nav class="main-nav-desktop" aria-label="ראשי">
+          <a href="#home">בית</a>
           <a href="#services">שירותים</a>
           <a href="#packages">חבילות</a>
           <a href="#gallery">גלריה</a>
           <a href="#contact" class="btn small">דברו איתי</a>
         </nav>
       </div>
+      <div class="mobile-menu" role="dialog" aria-label="תפריט" hidden>
+        <div class="row">
+          <a href="#home">בית</a>
+          <a href="#services">שירותים</a>
+          <a href="#packages">חבילות</a>
+          <a href="#gallery">גלריה</a>
+          <a href="#contact">דברו איתי</a>
+        </div>
       </div>
     </div>
   </header>
@@ -141,7 +156,7 @@
     <div class="container footer-inner">
       <img src="logo.png" alt="" width="120" height="42" loading="lazy"/>
       <nav class="footer-nav" aria-label="ניווט בתחתית">
-        <a href="#services">שירותים</a><a href="#packages">חבילות</a>
+        <a href="#home">בית</a><a href="#services">שירותים</a><a href="#packages">חבילות</a>
         <a href="#gallery">גלריה</a><a href="#contact">קשר</a>
       </nav>
       <small>© <span id="year"></span> להב סטודיו</small>
@@ -150,6 +165,6 @@
 
   <a class="whatsapp-fab" href="https://wa.me/972000000000" target="_blank" rel="noopener">WhatsApp</a>
 
-  <script src="script.js?v=522" defer defer defer></script>
+  <script src="script.js?v=523" defer defer defer></script>
 </body>
 </html>
