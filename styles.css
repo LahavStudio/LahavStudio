@@ -235,3 +235,6 @@ section{ scroll-margin-top: 96px }
 
 /* v5.3 no-hamburger hard kill */
 .hamburger, #hamburger, .mobile-menu, #mobileMenu { display: none !important; visibility: hidden !important; }
+
+/* v5.3 guests-only style */
+#contact select#guests{height:48px;border-radius:14px;padding:0 14px;}

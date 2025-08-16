@@ -186,3 +186,38 @@ const y=document.getElementById('year'); if(y) y.textContent=(new Date).getFullY
     kill();
   }
 })();
+
+
+// v5.3 form-only: WhatsApp redirect + guests 50..1000
+(function(){
+  const form = document.getElementById('leadFormSheets');
+  if(!form) return;
+  const guestsSel = document.getElementById('guests');
+  if (guestsSel && !guestsSel.options.length){
+    for(let n=50;n<=1000;n+=50){
+      const o=document.createElement('option'); o.value=String(n); o.textContent=n.toLocaleString('he-IL'); guestsSel.appendChild(o);
+    }
+  }
+  function buildMsg(){
+    const get=(n)=> (form.querySelector(`[name="${n}"]`)||{}).value || '';
+    const name   = String(get('name')).trim();
+    const phone  = String(get('phone')).trim();
+    const date   = String(get('event_date')).trim();
+    const type   = String(get('event_type')).trim();
+    const pkg    = String(get('package')).trim();
+    const guests = String(get('guests')).trim();
+    const note   = String(get('msg')).trim();
+    const msg = `היי, זה ${name} מהאתר להב סטודיו 📸
+יש לי ${type} בתאריך ${date}
+כמות המוזמנים שלי היא: ${guests} 💃🏽
+ואני מעוניין לשמוע עוד פרטים על חבילת ה-${pkg} 🎉
+זה מספר הפלאפון שלי:${phone} 📱
+וחשוב לי שתדע על האירוע ש${note}`;
+    return msg;
+  }
+  form.addEventListener('submit', function(e){
+    e.preventDefault(); e.stopImmediatePropagation();
+    const url='https://api.whatsapp.com/send?phone=972532799664&text='+encodeURIComponent(buildMsg());
+    setTimeout(()=>{ window.location.href=url; },0);
+  }, true);
+})();
