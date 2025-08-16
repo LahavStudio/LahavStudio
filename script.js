@@ -173,3 +173,16 @@ const y=document.getElementById('year'); if(y) y.textContent=(new Date).getFullY
     setTimeout(()=>{ window.location.href = url; }, 0);
   }, true);
 })();
+
+
+// v5.3 — remove any hamburger/mobile menu if it sneaks back in
+(function(){
+  const kill = ()=>{
+    document.querySelectorAll('.hamburger,#hamburger,.mobile-menu,#mobileMenu').forEach(el=>el.remove());
+  };
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', kill, {once:true});
+  } else {
+    kill();
+  }
+})();
