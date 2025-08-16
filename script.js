@@ -158,80 +158,69 @@ const y=document.getElementById('year'); if(y) y.textContent=(new Date).getFullY
 
 
 
-// v5.2.2-whatsapp3 — ultra-robust WhatsApp open on mobile
+
+
+
+
+// v5.2.2-whatsapp6 — anchor-based WhatsApp submit (best for iOS Safari)
 (function(){
   const PHONE = '972532799664';
+  function $(s, r=document){ return r.querySelector(s); }
   function byName(form, name){ const el = form.querySelector(`[name="${name}"]`); return el?String(el.value||'').trim():''; }
   function buildText(form){
-    const name = byName(form, 'name');
-    const phone= byName(form, 'phone');
-    const date = byName(form, 'date');
-    const type = byName(form, 'type');
-    const pack = byName(form, 'package');
-    const note = byName(form, 'msg');
-    const lines = [];
-    lines.push(`היי, זה ${name || 'לקוח'} מהאתר "להב סטודיו" ✨`);
-    if (phone) lines.push(`טלפון: ${phone}`);
-    if (date)  lines.push(`תאריך האירוע: ${date}`);
-    if (type)  lines.push(`סוג האירוע: ${type}`);
-    if (pack)  lines.push(`חבילה: ${pack}`);
-    if (note)  lines.push(`הודעה: ${note}`);
-    lines.push(`קישור לעמוד: ${location.href}`);
-    return encodeURIComponent(lines.join('\\n'));
+    const name = byName(form,'name');
+    const phone= byName(form,'phone');
+    const date = byName(form,'date');
+    const type = byName(form,'type');
+    const pack = byName(form,'package');
+    const note = byName(form,'msg');
+    const parts = [];
+    parts.push(`היי, זה ${name || 'לקוח'} מהאתר "להב סטודיו" ✨`);
+    if (phone) parts.push(`טלפון: ${phone}`);
+    if (date)  parts.push(`תאריך האירוע: ${date}`);
+    if (type)  parts.push(`סוג האירוע: ${type}`);
+    if (pack)  parts.push(`חבילה: ${pack}`);
+    if (note)  parts.push(`הודעה: ${note}`);
+    parts.push(`קישור לעמוד: ${location.href}`);
+    return encodeURIComponent(parts.join('\\n'));
   }
-
-  function openWhatsApp(text){
-    // Try native scheme first (best on iOS/Android), then fallbacks
-    const scheme = `whatsapp://send?phone=${PHONE}&text=${text}`;
-    const wa1 = `https://wa.me/${PHONE}?text=${text}`;
-    const wa2 = `https://api.whatsapp.com/send?phone=${PHONE}&text=${text}`;
-
-    let navigated = false;
-    try {
-      window.location.href = scheme;
-      navigated = true;
-    } catch(e){}
-
-    // Fallback after a short delay if scheme blocked
-    setTimeout(()=>{
-      if (document.visibilityState === 'hidden') return; // already switched to app
-      try {
-        const w = window.open(wa1, '_blank');
-        if (!w) window.location.assign(wa1);
-      } catch(e) {
-        window.location.assign(wa1);
-      }
-      // Secondary fallback if popup blocked
-      setTimeout(()=>{
-        if (document.visibilityState === 'hidden') return;
-        window.location.assign(wa2);
-      }, 900);
-    }, 600);
+  function makeUrl(form){
+    const text = buildText(form);
+    // iOS Safari הכי יציב עם api.whatsapp.com
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+    if (isIOS && isSafari){
+      return `https://api.whatsapp.com/send?phone=${PHONE}&text=${text}`;
+    }
+    return `https://wa.me/${PHONE}?text=${text}`;
   }
 
   function attach(){
-    const form = document.getElementById('leadFormSheets') || document.querySelector('section#contact form');
-    if(!form) return;
-    const msgEl = document.getElementById('formMsg');
+    const form = $('#leadFormSheets') || $('section#contact form');
+    const link = $('#waSend');
+    if (!form || !link) return;
 
-    function handle(e){
-      if (e) e.preventDefault();
-      if (msgEl) msgEl.textContent = 'פותח WhatsApp...';
-      const txt = buildText(form);
-      openWhatsApp(txt);
-      return false;
-    }
+    const update = ()=>{ link.setAttribute('href', makeUrl(form)); };
 
-    // Submit event
-    form.addEventListener('submit', handle, {passive:false});
+    // Update link as user types/changes
+    form.addEventListener('input', update, {passive:true});
+    form.addEventListener('change', update, {passive:true});
+    update();
 
-    // Also on an explicit click of a submit button (in case type/button mismatches)
-    const btn = form.querySelector('button[type="submit"], [data-wa-submit], .submit, .btn-submit');
-    if (btn) btn.addEventListener('click', handle, {passive:false});
+    // On click, ensure form validity; if invalid, block navigation
+    link.addEventListener('click', (e)=>{
+      if (form.checkValidity && !form.checkValidity()){
+        e.preventDefault();
+        form.reportValidity && form.reportValidity();
+        return false;
+      }
+      // allow default navigation to href (opens WhatsApp)
+      return true;
+    }, {passive:false});
   }
 
   if (document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', attach);
+    document.addEventListener('DOMContentLoaded', attach, {once:true});
   } else {
     attach();
   }
