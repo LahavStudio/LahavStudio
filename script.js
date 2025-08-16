@@ -133,8 +133,7 @@ const y=document.getElementById('year'); if(y) y.textContent=(new Date).getFullY
   document.querySelectorAll('[data-plan]').forEach(btn=>btn.addEventListener('click',()=>{
     const sel=document.getElementById('packageSelect'); if(sel) sel.value=btn.getAttribute('data-plan');
   }));
-  form.addEventListener('submit', async (e)=>{
-    e.preventDefault(); const fd=new FormData(form); const payload=Object.fromEntries(fd.entries()); payload.source_url=location.href; msg.textContent='שולח...';
+  const fd=new FormData(form); const payload=Object.fromEntries(fd.entries()); payload.source_url=location.href; msg.textContent='שולח...';
     try{ await fetch(ENDPOINT,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}); msg.textContent='הטופס נשלח! ניצור קשר בהקדם.'; form.reset(); }
     catch(err){ msg.textContent='שגיאה בשליחה. אפשר לנסות שוב או ליצור קשר בוואטסאפ.'; }
   });
@@ -155,39 +154,34 @@ const y=document.getElementById('year'); if(y) y.textContent=(new Date).getFullY
 })();
 
 
-
-// v5.2.2-sheets-form — Contact form → Google Sheets (FORM-ENCODED POST)
+// v5.2.2-whatsapp — Contact form opens WhatsApp with prefilled message (no server)
 (function(){
-  const form = document.getElementById('leadFormSheets');
-  const msg  = document.getElementById('formMsg');
+  const PHONE = '972532799664'; // יאן
+  const form  = document.getElementById('leadFormSheets');
+  const msgEl = document.getElementById('formMsg');
   if(!form) return;
 
-  // Use the same endpoint already in this file (keep your existing constant if present)
-  const SHEETS_ENDPOINT = "https://script.google.com/macros/s/AKfycbykPdxDbPJmT48ZwSjYAqFNq41m4D0-mw18gNih2fskZBNsAfD5c7j4X7ADL0EYFppN/exec";
+  function buildMessage(data){
+    const parts = [];
+    if (data.name)   parts.push(`שם: ${data.name}`);
+    if (data.phone)  parts.push(`טלפון: ${data.phone}`);
+    if (data.date)   parts.push(`תאריך אירוע: ${data.date}`);
+    if (data.type)   parts.push(`סוג אירוע: ${data.type}`);
+    if (data.package)parts.push(`חבילה: ${data.package}`);
+    if (data.msg)    parts.push(`הודעה: ${data.msg}`);
+    parts.push(`קישור לעמוד: ${location.href}`);
+    const header = `היי, זה ${data.name || 'לקוח'} מהאתר להב סטודיו ✨`;
+    return `${header}\n${parts.join('\n')}`;
+  }
 
-  form.addEventListener('submit', async (e) => {
+  form.addEventListener('submit', (e) => {
     e.preventDefault();
     const fd = new FormData(form);
-    // add extras
-    fd.append('source_url', location.href);
-    fd.append('ua', navigator.userAgent);
-    // Convert to URLSearchParams for classic form-encoded body
-    const body = new URLSearchParams();
-    for (const [k,v] of fd.entries()) body.append(k, v);
-
-    try {
-      if (msg) msg.textContent = 'שולח...';
-      await fetch(SHEETS_ENDPOINT, {
-        method: 'POST',
-        mode: 'no-cors', // allow cross-origin without CORS headers
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
-        body: body.toString()
-      });
-      if (msg) msg.textContent = 'הטופס נשלח! ניצור קשר בהקדם.';
-      form.reset();
-    } catch(err) {
-      if (msg) msg.textContent = 'שגיאה בשליחה. אפשר לנסות שוב או ליצור קשר בוואטסאפ.';
-      console.error('Sheets submit error:', err);
-    }
+    const data = Object.fromEntries(fd.entries());
+    const txt = encodeURIComponent(buildMessage(data));
+    const wa  = `https://wa.me/${PHONE}?text=${txt}`;
+    if (msgEl) msgEl.textContent = 'פותח WhatsApp...';
+    // עדיף ניתוב מלא כדי שייפתח גם באפליקציה במובייל וגם ב-Web בדסקטופ
+    window.location.href = wa;
   });
 })();
