@@ -154,34 +154,47 @@ const y=document.getElementById('year'); if(y) y.textContent=(new Date).getFullY
 })();
 
 
-// v5.2.2-whatsapp — Contact form opens WhatsApp with prefilled message (no server)
+
+
+// v5.2.2-whatsapp2 — robust WhatsApp redirect on contact form submit
 (function(){
   const PHONE = '972532799664'; // יאן
   const form  = document.getElementById('leadFormSheets');
   const msgEl = document.getElementById('formMsg');
   if(!form) return;
 
-  function buildMessage(data){
-    const parts = [];
-    if (data.name)   parts.push(`שם: ${data.name}`);
-    if (data.phone)  parts.push(`טלפון: ${data.phone}`);
-    if (data.date)   parts.push(`תאריך אירוע: ${data.date}`);
-    if (data.type)   parts.push(`סוג אירוע: ${data.type}`);
-    if (data.package)parts.push(`חבילה: ${data.package}`);
-    if (data.msg)    parts.push(`הודעה: ${data.msg}`);
-    parts.push(`קישור לעמוד: ${location.href}`);
-    const header = `היי, זה ${data.name || 'לקוח'} מהאתר להב סטודיו ✨`;
-    return `${header}\n${parts.join('\n')}`;
+  function val(name){
+    const el = form.querySelector(`[name="${name}"]`);
+    return el ? String(el.value || '').trim() : '';
+  }
+
+  function buildText(){
+    const name = val('name');
+    const phone = val('phone');
+    const date = val('date');
+    const type = val('type');
+    const pack = val('package');
+    const note = val('msg');
+    const lines = [];
+    lines.push(`היי, זה ${name || 'לקוח'} מהאתר "להב סטודיו" ✨`);
+    if (phone) lines.push(`טלפון: ${phone}`);
+    if (date)  lines.push(`תאריך האירוע: ${date}`);
+    if (type)  lines.push(`סוג האירוע: ${type}`);
+    if (pack)  lines.push(`חבילה: ${pack}`);
+    if (note)  lines.push(`הודעה: ${note}`);
+    lines.push(`קישור לעמוד: ${location.href}`);
+    return lines.join('\n');
   }
 
   form.addEventListener('submit', (e) => {
     e.preventDefault();
-    const fd = new FormData(form);
-    const data = Object.fromEntries(fd.entries());
-    const txt = encodeURIComponent(buildMessage(data));
-    const wa  = `https://wa.me/${PHONE}?text=${txt}`;
+    const text = encodeURIComponent(buildText());
+    const url = `https://wa.me/${PHONE}?text=${text}`;
     if (msgEl) msgEl.textContent = 'פותח WhatsApp...';
-    // עדיף ניתוב מלא כדי שייפתח גם באפליקציה במובייל וגם ב-Web בדסקטופ
-    window.location.href = wa;
-  });
+    // Try opening in a new tab/window (mobile app usually intercepts), fallback to same-page navigation
+    const win = window.open(url, '_blank');
+    if (!win || win.closed || typeof win.closed === 'undefined') {
+      window.location.href = url;
+    }
+  }, {passive:false});
 })();
