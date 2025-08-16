@@ -155,25 +155,33 @@ const y=document.getElementById('year'); if(y) y.textContent=(new Date).getFullY
 })();
 
 
-// v5.2.2-sheets — Contact form → Google Sheets (JSON POST)
+
+// v5.2.2-sheets-form — Contact form → Google Sheets (FORM-ENCODED POST)
 (function(){
-  const SHEETS_ENDPOINT = "https://script.google.com/macros/s/AKfycbykPdxDbPJmT48ZwSjYAqFNq41m4D0-mw18gNih2fskZBNsAfD5c7j4X7ADL0EYFppN/exec";
   const form = document.getElementById('leadFormSheets');
   const msg  = document.getElementById('formMsg');
   if(!form) return;
 
+  // Use the same endpoint already in this file (keep your existing constant if present)
+  const SHEETS_ENDPOINT = "https://script.google.com/macros/s/AKfycbykPdxDbPJmT48ZwSjYAqFNq41m4D0-mw18gNih2fskZBNsAfD5c7j4X7ADL0EYFppN/exec";
+
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const fd = new FormData(form);
-    const payload = Object.fromEntries(fd.entries());
-    payload.source_url = location.href;
-    payload.ua = navigator.userAgent;
+    // add extras
+    fd.append('source_url', location.href);
+    fd.append('ua', navigator.userAgent);
+    // Convert to URLSearchParams for classic form-encoded body
+    const body = new URLSearchParams();
+    for (const [k,v] of fd.entries()) body.append(k, v);
+
     try {
       if (msg) msg.textContent = 'שולח...';
       await fetch(SHEETS_ENDPOINT, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+        mode: 'no-cors', // allow cross-origin without CORS headers
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
+        body: body.toString()
       });
       if (msg) msg.textContent = 'הטופס נשלח! ניצור קשר בהקדם.';
       form.reset();
