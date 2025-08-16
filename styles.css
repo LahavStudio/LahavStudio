@@ -272,3 +272,10 @@ section{ scroll-margin-top: 96px }
   .top-nav { gap: 10px; padding: 10px 12px; }
   .top-nav .nav-link { font-size: 15px; padding: 8px 10px; }
 }
+
+
+/* v5.2.2 navfix3 — precise centering + remove empty glass boxes */
+.site-header.glass { display: flex; align-items: center; }
+.top-nav { display:flex; align-items:center; justify-content:space-evenly; width:100%; min-height:56px; }
+.top-nav .nav-link { display:inline-flex; align-items:center; justify-content:center; line-height:1; }
+.glass:empty { display:none !important; }
