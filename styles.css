@@ -252,3 +252,23 @@ section{ scroll-margin-top: 96px }
   .top-nav { gap: 14px; padding: 10px 12px; justify-content: space-between; }
   .top-nav .nav-link { font-size: 15px; padding: 8px 10px; }
 }
+
+
+/* v5.2.2 navfix2 */
+.site-header { position: static; width: 100%; display: flex; justify-content: center; }
+.site-header.glass {
+  background: rgba(255,255,255,0.18);
+  border: 1px solid rgba(255,255,255,0.35);
+  border-radius: 20px;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  max-width: 980px;
+  margin: 16px auto;
+}
+.top-nav { display: flex; gap: 22px; padding: 12px 18px; align-items: center; justify-content: space-between; }
+.top-nav .nav-link { color: #111 !important; font-weight: 800; text-decoration: none; padding: 8px 12px; border-radius: 12px; }
+.top-nav .nav-link:hover { background: rgba(255,255,255,0.55); }
+@media (max-width: 480px){
+  .top-nav { gap: 10px; padding: 10px 12px; }
+  .top-nav .nav-link { font-size: 15px; padding: 8px 10px; }
+}

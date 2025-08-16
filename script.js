@@ -228,3 +228,15 @@ document.querySelectorAll('.top-nav .nav-link').forEach(a=>{
     }
   }, {passive:false});
 });
+
+
+// v5.2.2 navfix2: smooth scroll for header links
+document.querySelectorAll('.top-nav .nav-link').forEach(a=>{
+  a.addEventListener('click', (e)=>{
+    const id = a.getAttribute('href');
+    if(id && id.startsWith('#')){
+      e.preventDefault();
+      document.querySelector(id)?.scrollIntoView({behavior:'smooth', block:'start'});
+    }
+  }, {passive:false});
+});
