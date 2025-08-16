@@ -162,66 +162,35 @@ const y=document.getElementById('year'); if(y) y.textContent=(new Date).getFullY
 
 
 
-// v5.2.2-whatsapp6 — anchor-based WhatsApp submit (best for iOS Safari)
+
+
+// v5.2.2-whatsapp-form — build WhatsApp message and let the form submit (GET)
 (function(){
-  const PHONE = '972532799664';
-  function $(s, r=document){ return r.querySelector(s); }
-  function byName(form, name){ const el = form.querySelector(`[name="${name}"]`); return el?String(el.value||'').trim():''; }
-  function buildText(form){
-    const name = byName(form,'name');
-    const phone= byName(form,'phone');
-    const date = byName(form,'date');
-    const type = byName(form,'type');
-    const pack = byName(form,'package');
-    const note = byName(form,'msg');
+  const form = document.getElementById('leadFormSheets') || document.querySelector('section#contact form');
+  if (!form) return;
+  // ensure hidden inputs exist
+  let phoneHidden = form.querySelector('input[name="phone"]');
+  let textHidden  = form.querySelector('input[name="text"]');
+  if (!phoneHidden) { phoneHidden = document.createElement('input'); phoneHidden.type='hidden'; phoneHidden.name='phone'; form.prepend(phoneHidden); }
+  if (!textHidden)  { textHidden  = document.createElement('input'); textHidden.type='hidden';  textHidden.name='text';  form.prepend(textHidden); }
+  phoneHidden.value = '972532799664';
+
+  function val(n){ const el = form.querySelector(`[name="${n}"]`); return el ? String(el.value||'').trim() : ''; }
+  function compose(){
+    const name = val('name'), phone = val('phone'), date = val('date'), typ = val('type'), pack = val('package'), note = val('msg');
     const parts = [];
     parts.push(`היי, זה ${name || 'לקוח'} מהאתר "להב סטודיו" ✨`);
     if (phone) parts.push(`טלפון: ${phone}`);
     if (date)  parts.push(`תאריך האירוע: ${date}`);
-    if (type)  parts.push(`סוג האירוע: ${type}`);
+    if (typ)   parts.push(`סוג האירוע: ${typ}`);
     if (pack)  parts.push(`חבילה: ${pack}`);
     if (note)  parts.push(`הודעה: ${note}`);
     parts.push(`קישור לעמוד: ${location.href}`);
-    return encodeURIComponent(parts.join('\\n'));
-  }
-  function makeUrl(form){
-    const text = buildText(form);
-    // iOS Safari הכי יציב עם api.whatsapp.com
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-    if (isIOS && isSafari){
-      return `https://api.whatsapp.com/send?phone=${PHONE}&text=${text}`;
-    }
-    return `https://wa.me/${PHONE}?text=${text}`;
+    return parts.join('\n');
   }
 
-  function attach(){
-    const form = $('#leadFormSheets') || $('section#contact form');
-    const link = $('#waSend');
-    if (!form || !link) return;
-
-    const update = ()=>{ link.setAttribute('href', makeUrl(form)); };
-
-    // Update link as user types/changes
-    form.addEventListener('input', update, {passive:true});
-    form.addEventListener('change', update, {passive:true});
-    update();
-
-    // On click, ensure form validity; if invalid, block navigation
-    link.addEventListener('click', (e)=>{
-      if (form.checkValidity && !form.checkValidity()){
-        e.preventDefault();
-        form.reportValidity && form.reportValidity();
-        return false;
-      }
-      // allow default navigation to href (opens WhatsApp)
-      return true;
-    }, {passive:false});
-  }
-
-  if (document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', attach, {once:true});
-  } else {
-    attach();
-  }
+  form.addEventListener('submit', function(){
+    // let the browser encode the GET query; just place plain text
+    textHidden.value = compose();
+  }, {passive:true});
 })();

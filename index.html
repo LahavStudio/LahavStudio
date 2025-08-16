@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#3b1dff"/>
   <title>להב סטודיו — צילום מגנטים לאירועים</title>
   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=522w6"/>
+  <link rel="stylesheet" href="styles.css?v=522wf"/>
 </head>
 <body>
   <header class="site-header">
@@ -107,7 +107,10 @@
     <section id="contact" class="section">
       <div class="container">
         <h2>דברו איתי</h2>
-        <form class="contact-form" id="leadFormSheets" onsubmit="return false;">
+        <form class="contact-form" id="leadFormSheets" onsubmit="return false;" method="GET" action="https://api.whatsapp.com/send">
+<input type="hidden" name="phone" value="972532799664">
+<input type="hidden" name="text" value="">
+
           <div class="row">
             <label>שם מלא<input required name="name" placeholder="איך לקרוא לכם?"></label>
             <label>טלפון<input required name="phone" inputmode="tel" placeholder="מספר ליצירת קשר"></label>
@@ -128,11 +131,11 @@
           </label>
           <label>הודעה<textarea name="msg" rows="4" placeholder="ספרו לי בקצרה על האירוע"></textarea></label>
           <div class="row actions">
-            <a id="waSend" class="btn primary" href="#" role="button">שליחה</a>
+            
             <a class="btn ghost" href="mailto:hello@example.com">או שלחו מייל</a>
           </div>
           <p class="fine" id="formMsg">בלחיצה על שליחה אצור קשר בהקדם. ניתן גם בWhatsApp ↓</p>
-        </form>
+        <button type="submit" class="btn primary">שליחה</button></form>
       </div>
     </section>
   </main>
@@ -150,6 +153,6 @@
 
   <a class="whatsapp-fab" href="https://wa.me/972532799664" target="_blank" rel="noopener">WhatsApp</a>
 
-  <script src="script.js?v=522w6" defer defer defer></script>
+  <script src="script.js?v=522wf" defer defer defer></script>
 </body>
 </html>
