@@ -141,15 +141,31 @@ const y=document.getElementById('year'); if(y) y.textContent=(new Date).getFullY
 })();
 
 
-// v5.2.0 — smooth-scroll for always-visible header nav (no hamburger)
+// ===== v5.2.2 — WhatsApp redirect (capture-phase; overrides Sheets) =====
 (function(){
-  const nav = document.querySelector('.main-nav');
-  if(!nav) return;
-  nav.querySelectorAll('a[href^="#"]').forEach(a=>{
-    a.addEventListener('click', (e)=>{
-      const id = a.getAttribute('href').slice(1);
-      const el = document.getElementById(id);
-      if(el){ e.preventDefault(); el.scrollIntoView({behavior:'smooth'}); }
-    }, {passive:false});
-  });
+  const form = document.getElementById('leadFormSheets');
+  if(!form) return;
+  const PHONE = '972532799664'; // יאן
+  function val(name){ const el=form.querySelector(`[name="${name}"]`); return el ? String(el.value||'').trim() : ''; }
+  function buildText(){
+    const name = val('name');
+    const phone= val('phone');
+    const date = val('event_date');
+    const type = val('event_type');
+    const pack = val('package');
+    const note = val('msg');
+    const lines = [];
+    lines.push(`היי, זה ${name || 'לקוח'} מהאתר להב סטודיו 📸`);
+    if (type || date) lines.push(`יש לי ${type || 'אירוע'} בתאריך ${date || '[תאריך]'} ואני מעוניין לשמוע עוד פרטים על חבילת ה-${pack || '[חבילה]'} 🎉`);
+    if (phone) lines.push(`זה מספר הפלאפון שלי: ${phone} 📱`);
+    if (note)  lines.push(`וחשוב לי שתדע על האירוע ש${note}`);
+    return lines.join('\\n');
+  }
+  form.addEventListener('submit', function(e){
+    // run before any other submit listeners:
+    e.preventDefault(); e.stopImmediatePropagation();
+    const text = encodeURIComponent(buildText());
+    const url  = `https://api.whatsapp.com/send?phone=${PHONE}&text=${text}`;
+    window.location.href = url;
+  }, true); // capture-phase so it fires first
 })();
