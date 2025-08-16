@@ -261,3 +261,16 @@ section{ scroll-margin-top: 96px }
 }
 
 /* Keep the header glass as-is; no sticky changes */
+
+/* ===== v5.2.1 — mobile nav fit inside header ===== */
+@media (max-width: 899px){
+  .header-bar{ overflow:hidden } /* keep rounded clip so nothing spills */
+  .main-nav{ inset-inline:10px; gap:clamp(6px, 2.2vw, 12px) }
+  .main-nav a{
+    font-size: clamp(13px, 3.6vw, 15px);
+    padding: 8px 10px;
+  }
+}
+@media (max-width: 380px){
+  .main-nav a{ font-size: 13px; padding: 8px 8px }
+}
