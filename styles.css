@@ -229,3 +229,26 @@ section{ scroll-margin-top: 96px }
 .mobile-menu .row a{ cursor:pointer; display:inline-block }
 @keyframes menuItemIn{ to{ opacity:1; transform:none } }
 @keyframes menuItemOut{ to{ opacity:0; transform:translateY(-8px) } }
+
+
+/* v5.2.2 navfix — fixed (non-sticky) glass header with inline links */
+.site-header { position: static; width: 100%; display: flex; justify-content: center; }
+.site-header.glass {
+  background: rgba(255,255,255,0.18);
+  border: 1px solid rgba(255,255,255,0.35);
+  border-radius: 20px;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  max-width: 980px;
+  margin: 16px auto;
+}
+.top-nav { display: flex; gap: 24px; padding: 12px 20px; align-items: center; }
+.top-nav .nav-link {
+  font-weight: 800; text-decoration: none; color: #111;
+  padding: 8px 14px; border-radius: 12px;
+}
+.top-nav .nav-link:hover { background: rgba(255,255,255,0.5); }
+@media (max-width: 480px) {
+  .top-nav { gap: 14px; padding: 10px 12px; justify-content: space-between; }
+  .top-nav .nav-link { font-size: 15px; padding: 8px 10px; }
+}

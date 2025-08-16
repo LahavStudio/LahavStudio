@@ -213,3 +213,18 @@ const y=document.getElementById('year'); if(y) y.textContent=(new Date).getFullY
   form.addEventListener('change', update, {passive:true});
   update();
 })();
+
+// v5.2.2 navfix: remove old hamburger/menu if present
+(function(){
+  document.querySelectorAll('.hamburger, .mobile-menu, .header-bar .logo').forEach(el=>el.remove());
+})();
+// smooth scroll for top-nav links
+document.querySelectorAll('.top-nav .nav-link').forEach(a=>{
+  a.addEventListener('click', function(e){
+    const id = this.getAttribute('href');
+    if(id && id.startsWith('#')){
+      e.preventDefault();
+      document.querySelector(id)?.scrollIntoView({behavior:'smooth', block:'start'});
+    }
+  }, {passive:false});
+});
