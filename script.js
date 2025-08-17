@@ -290,3 +290,50 @@ document.querySelectorAll('.top-nav .nav-link').forEach(a=>{
     fillGuests();
   }
 })();
+
+/* v5.2.2 — FORCE WhatsApp submit (capture) + robust guards */
+(function(){
+  var form = document.getElementById('leadFormSheets');
+  if (!form) return;
+
+  // אם יש action בטופס – ננטרל כדי לא לגרום לרענון
+  try { form.removeAttribute('action'); } catch(_) {}
+
+  // אוספי ערכים מהטופס לפי name=
+  function val(n){
+    var el = form.querySelector('[name="'+n+'"]');
+    return el ? (el.value || '').trim() : '';
+  }
+
+  // בניית ההודעה המדויקת (עם ירידות שורה אמיתיות)
+  function buildMsg(){
+    var name   = val('name');
+    var phone  = val('phone');
+    var date   = val('event_date');
+    var type   = val('event_type');
+    var pack   = val('package');
+    var guests = val('guests');
+    var note   = val('msg');
+    return `היי, זה ${name} מהאתר להב סטודיו 📸
+יש לי ${type} בתאריך ${date}
+כמות המוזמנים שלי היא: ${guests} 💃🏽
+ואני מעוניין לשמוע עוד פרטים על חבילת ה-${pack} 🎉
+זה מספר הפלאפון שלי:${phone} 📱
+וחשוב לי שתדע על האירוע ש${note}`;
+  }
+
+  // מאזין Submit בשלב התפיסה: מבטל הכול ומפנה לוואטסאפ
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    e.stopImmediatePropagation();
+
+    var url = 'https://api.whatsapp.com/send?phone=972532799664&text=' + encodeURIComponent(buildMsg());
+    // תאימות iOS/Safari
+    setTimeout(function(){ window.location.href = url; }, 0);
+  }, true);
+
+  // גידור נוסף: אם יש מאזין מאוחר שמנסה לשלוח שוב
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+  }, false);
+})();
