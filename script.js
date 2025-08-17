@@ -142,21 +142,46 @@ const y=document.getElementById('year'); if(y) y.textContent=(new Date).getFullY
 
 /* guests options filler (50 → 1000) */
 (function(){
-  const sel = document.getElementById('guests');
-  if (!sel || sel.options.length) return;
-  const first = document.createElement('option');
-  first.value = ''; first.disabled = true; first.selected = true;
-  first.textContent = 'בחר כמות';
-  sel.appendChild(first);
+  const sel = document.getElementById('guests') || document.querySelector('#contact select[name="guests"]');
+  if (!sel || sel.querySelector('option[value="50"]')) return;
+  if (!sel.querySelector('option[value=""]')) {
+    const first = document.createElement('option');
+    first.value = ''; first.disabled = true; first.selected = true;
+    first.textContent = 'בחר כמות';
+    sel.prepend(first);
+  }
   for (let n = 50; n <= 1000; n += 50) {
-    const opt = document.createElement('option');
-    opt.value = String(n);
-    opt.textContent = n.toLocaleString('he-IL');
-    sel.appendChild(opt);
+    if (!sel.querySelector(`option[value="${n}"]`)) {
+      const opt = document.createElement('option');
+      opt.value = String(n);
+      opt.textContent = n.toLocaleString('he-IL');
+      sel.appendChild(opt);
+    }
   }
 })();
 
 // ===== v5.2.2 — WhatsApp redirect (capture-phase; overrides Sheets) =====
+(function(){
+  const PHONE = '972532799664';
+  const form = document.getElementById('leadFormSheets') || document.querySelector('#contact form');
+  if (!form) return;
+  const val = (n) => (form.querySelector(`[name="${n}"]`)?.value || '').trim();
+
+  // מלא את כמות המוזמנים אם ריק
+  const sel = form.querySelector('#guests');
+  if (sel && !sel.querySelector('option[value="50"]')) {
+    if (!sel.querySelector('option[value=""]')) {
+      const first = document.createElement('option');
+      first.value = ''; first.disabled = true; first.selected = true; first.textContent = 'בחר כמות';
+      sel.prepend(first);
+    }
+    for (let n = 50; n <= 1000; n += 50) {
+      const opt = document.createElement('option');
+      opt.value = String(n);
+      opt.textContent = n.toLocaleString('he-IL');
+      sel.appendChild(opt);
+    }
+  }
 function buildText(){
   const name = val('name');
   const phone= val('phone');
