@@ -140,28 +140,38 @@ const y=document.getElementById('year'); if(y) y.textContent=(new Date).getFullY
   });
 })();
 
+/* guests options filler (50 → 1000) */
+(function(){
+  const sel = document.getElementById('guests');
+  if (!sel || sel.options.length) return;
+  const first = document.createElement('option');
+  first.value = ''; first.disabled = true; first.selected = true;
+  first.textContent = 'בחר כמות';
+  sel.appendChild(first);
+  for (let n = 50; n <= 1000; n += 50) {
+    const opt = document.createElement('option');
+    opt.value = String(n);
+    opt.textContent = n.toLocaleString('he-IL');
+    sel.appendChild(opt);
+  }
+})();
 
 // ===== v5.2.2 — WhatsApp redirect (capture-phase; overrides Sheets) =====
-(function(){
-  const form = document.getElementById('leadFormSheets');
-  if(!form) return;
-  const PHONE = '972532799664'; // יאן
-  function val(name){ const el=form.querySelector(`[name="${name}"]`); return el ? String(el.value||'').trim() : ''; }
-  function buildText(){
-    const name = val('name');
-    const phone= val('phone');
-    const date = val('event_date');
-    const type = val('event_type');
-    const pack = val('package');
-    const note = val('msg');
-    const lines = [];
-    lines.push(`היי, זה ${name || 'לקוח'} מהאתר להב סטודיו 📸`);
-    if (type || date) lines.push(`יש לי ${type || 'אירוע'} בתאריך ${date || '[תאריך]'} ואני מעוניין לשמוע עוד פרטים על חבילת ה-${pack || '[חבילה]'} 🎉`);
-    if (phone) lines.push(`זה מספר הפלאפון שלי: ${phone} 📱`);
-    if (note)  lines.push(`וחשוב לי שתדע על האירוע ש${note}`);
-    return lines.join('\
-');
-  }
+function buildText(){
+  const name = val('name');
+  const phone= val('phone');
+  const date = val('event_date');
+  const type = val('event_type');
+  const pack = val('package');
+  const guests = val('guests');
+  const note = val('msg');
+  return `היי, זה ${name} מהאתר להב סטודיו 📸
+יש לי ${type} בתאריך ${date}
+כמות המוזמנים שלי היא: ${guests} 💃🏽
+ואני מעוניין לשמוע עוד פרטים על חבילת ה-${pack} 🎉
+זה מספר הפלאפון שלי:${phone} 📱
+וחשוב לי שתדע על האירוע ש${note}`;
+}
   form.addEventListener('submit', function(e){
     // run before any other submit listeners:
     e.preventDefault(); e.stopImmediatePropagation();
@@ -182,19 +192,23 @@ const y=document.getElementById('year'); if(y) y.textContent=(new Date).getFullY
   function val(n){ const el=form.querySelector(`[name="${n}"]`); return el ? String(el.value||'').trim() : ''; }
 
   function buildText(){
-    const name = val('name');
-    const phone= val('phone');
-    const date = val('event_date');
-    const type = val('event_type');
-    const pack = val('package');
-    const note = val('msg');
-    const parts = [];
-    parts.push(`היי, זה ${name || 'לקוח'} מהאתר להב סטודיו 📸`);
-    parts.push(`יש לי ${type || 'אירוע'} בתאריך ${date || '[תאריך]'} ואני מעוניין לשמוע עוד פרטים על חבילת ה-${pack || '[חבילה]'} 🎉`);
-    if (phone) parts.push(`זה מספר הפלאפון שלי: ${phone} 📱`);
-    if (note)  parts.push(`וחשוב לי שתדע על האירוע ש${note}`);
-    return encodeURIComponent(parts.join('\
-'));
+  const name = val('name');
+  const phone= val('phone');
+  const date = val('event_date');
+  const type = val('event_type');
+  const pack = val('package');
+  const guests = val('guests');
+  const note = val('msg');
+
+  const msg = `היי, זה ${name} מהאתר להב סטודיו 📸
+יש לי ${type} בתאריך ${date}
+כמות המוזמנים שלי היא: ${guests} 💃🏽
+ואני מעוניין לשמוע עוד פרטים על חבילת ה-${pack} 🎉
+זה מספר הפלאפון שלי:${phone} 📱
+וחשוב לי שתדע על האירוע ש${note}`;
+
+  return encodeURIComponent(msg);
+}
   }
 
   function update(){
