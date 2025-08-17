@@ -337,3 +337,35 @@ document.querySelectorAll('.top-nav .nav-link').forEach(a=>{
     e.preventDefault();
   }, false);
 })();
+
+/* v5.2.2 — guests options filler (50 → 1000) */
+(function(){
+  function fill(){
+    var sel = document.getElementById('guests');
+    if (!sel) return;
+    if (sel.querySelector('option[value="50"]')) return; // כבר מולא
+
+    // ודא שיש placeholder
+    if (!sel.querySelector('option[value=""]')){
+      var first = document.createElement('option');
+      first.value = '';
+      first.disabled = true;
+      first.selected = true;
+      first.textContent = 'בחר כמות';
+      sel.prepend(first);
+    }
+    for (var n = 50; n <= 1000; n += 50){
+      if (!sel.querySelector('option[value="'+n+'"]')){
+        var opt = document.createElement('option');
+        opt.value = String(n);
+        opt.textContent = n.toLocaleString('he-IL');
+        sel.appendChild(opt);
+      }
+    }
+  }
+  if (document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', fill, {once:true});
+  } else {
+    fill();
+  }
+})();
