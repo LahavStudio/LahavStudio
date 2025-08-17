@@ -255,97 +255,27 @@ document.querySelectorAll('.top-nav .nav-link').forEach(a=>{
   }, {passive:false});
 });
 
-/* v5.2.2 – guests: robust populate after DOM ready */
-(function () {
-  function fillGuests() {
-    var sel = document.getElementById('guests');
-    if (!sel) return;
-    // אם כבר מולא פעם – לא למלא שוב
-    if (sel.querySelector('option[value="50"]')) return;
-
-    // ודא שיש placeholder בראש
-    if (!sel.querySelector('option[value=""]')) {
-      var first = document.createElement('option');
-      first.value = '';
-      first.disabled = true;
-      first.selected = true;
-      first.textContent = 'בחר כמות';
-      sel.prepend(first);
-    }
-
-    // מלא 50 → 1000 בקפיצות 50
-    for (var n = 50; n <= 1000; n += 50) {
-      if (!sel.querySelector('option[value="' + n + '"]')) {
-        var opt = document.createElement('option');
-        opt.value = String(n);
-        opt.textContent = n.toLocaleString('he-IL');
-        sel.appendChild(opt);
-      }
-    }
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', fillGuests, { once: true });
-  } else {
-    fillGuests();
-  }
-})();
-
-/* v5.2.2 — FORCE WhatsApp submit (capture) + robust guards */
+/* v5.2.2 — harden contact form: guests + WhatsApp submit (capture) */
 (function(){
-  var form = document.getElementById('leadFormSheets');
+  // 1) locate the form robustly
+  var form =
+    document.getElementById('leadFormSheets') ||
+    document.getElementById('contactForm')   ||
+    document.querySelector('#contact form');
   if (!form) return;
 
-  // אם יש action בטופס – ננטרל כדי לא לגרום לרענון
-  try { form.removeAttribute('action'); } catch(_) {}
+  // 2) normalize form so it won't submit/refresh by itself
+  try { form.removeAttribute('action'); } catch(_){}
+  try { form.removeAttribute('target'); } catch(_){}
 
-  // אוספי ערכים מהטופס לפי name=
-  function val(n){
-    var el = form.querySelector('[name="'+n+'"]');
-    return el ? (el.value || '').trim() : '';
-  }
-
-  // בניית ההודעה המדויקת (עם ירידות שורה אמיתיות)
-  function buildMsg(){
-    var name   = val('name');
-    var phone  = val('phone');
-    var date   = val('event_date');
-    var type   = val('event_type');
-    var pack   = val('package');
-    var guests = val('guests');
-    var note   = val('msg');
-    return `היי, זה ${name} מהאתר להב סטודיו 📸
-יש לי ${type} בתאריך ${date}
-כמות המוזמנים שלי היא: ${guests} 💃🏽
-ואני מעוניין לשמוע עוד פרטים על חבילת ה-${pack} 🎉
-זה מספר הפלאפון שלי:${phone} 📱
-וחשוב לי שתדע על האירוע ש${note}`;
-  }
-
-  // מאזין Submit בשלב התפיסה: מבטל הכול ומפנה לוואטסאפ
-  form.addEventListener('submit', function(e){
-    e.preventDefault();
-    e.stopImmediatePropagation();
-
-    var url = 'https://api.whatsapp.com/send?phone=972532799664&text=' + encodeURIComponent(buildMsg());
-    // תאימות iOS/Safari
-    setTimeout(function(){ window.location.href = url; }, 0);
-  }, true);
-
-  // גידור נוסף: אם יש מאזין מאוחר שמנסה לשלוח שוב
-  form.addEventListener('submit', function(e){
-    e.preventDefault();
-  }, false);
-})();
-
-/* v5.2.2 — guests options filler (50 → 1000) */
-(function(){
-  function fill(){
-    var sel = document.getElementById('guests');
+  // 3) ensure the guests select exists and is populated 50..1000
+  function fillGuests(){
+    var sel = document.getElementById('guests') || form.querySelector('select[name="guests"]');
     if (!sel) return;
-    if (sel.querySelector('option[value="50"]')) return; // כבר מולא
+    // already filled?
+    if (sel.querySelector('option[value="50"]')) return;
 
-    // ודא שיש placeholder
+    // keep placeholder at the top
     if (!sel.querySelector('option[value=""]')){
       var first = document.createElement('option');
       first.value = '';
@@ -354,8 +284,9 @@ document.querySelectorAll('.top-nav .nav-link').forEach(a=>{
       first.textContent = 'בחר כמות';
       sel.prepend(first);
     }
+
     for (var n = 50; n <= 1000; n += 50){
-      if (!sel.querySelector('option[value="'+n+'"]')){
+      if (!sel.querySelector('option[value="' + n + '"]')){
         var opt = document.createElement('option');
         opt.value = String(n);
         opt.textContent = n.toLocaleString('he-IL');
@@ -363,9 +294,63 @@ document.querySelectorAll('.top-nav .nav-link').forEach(a=>{
       }
     }
   }
+
+  // run now or on DOM ready (works בכל הדפדפנים)
   if (document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', fill, {once:true});
+    document.addEventListener('DOMContentLoaded', fillGuests, {once:true});
   } else {
-    fill();
+    fillGuests();
   }
+
+  // 4) helper to read values by name=
+  function val(n){
+    var el = form.querySelector('[name="'+n+'"]');
+    return el ? (el.value || '').trim() : '';
+  }
+
+  // 5) exact WhatsApp message (שורות חדשות אמיתיות)
+  function buildMsg(){
+    var name   = val('name');
+    var phone  = val('phone');
+    var date   = val('event_date');
+    var type   = val('event_type');
+    var pack   = val('package');
+    var guests = val('guests');
+    var note   = val('msg');
+
+    return `היי, זה ${name} מהאתר להב סטודיו 📸
+יש לי ${type} בתאריך ${date}
+כמות המוזמנים שלי היא: ${guests} 💃🏽
+ואני מעוניין לשמוע עוד פרטים על חבילת ה-${pack} 🎉
+זה מספר הפלאפון שלי:${phone} 📱
+וחשוב לי שתדע על האירוע ש${note}`;
+  }
+
+  // 6) capture submit FIRST: stop refresh, open WA
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    e.stopImmediatePropagation(); // עוצר מאזינים אחרים שינסו לשלוח
+
+    var url = 'https://api.whatsapp.com/send?phone=972532799664&text=' + encodeURIComponent(buildMsg());
+
+    // תאימות iOS/Safari
+    setTimeout(function(){ window.location.href = url; }, 0);
+  }, true);
+
+  // 7) עוד גידור: מאזין bubble שמבטל כל שליחה מאוחרת
+  form.addEventListener('submit', function(e){ e.preventDefault(); }, false);
+
+  // 8) אם יש לך כפתור <a id="waSend"> — נעדכן לו קישור חי
+  var link = document.getElementById('waSend');
+  function updateLink(){
+    if (!link) return;
+    link.setAttribute(
+      'href',
+      'https://api.whatsapp.com/send?phone=972532799664&text=' + encodeURIComponent(buildMsg())
+    );
+  }
+  ['input','change'].forEach(function(ev){
+    form.addEventListener(ev, updateLink, true);
+  });
+  updateLink();
 })();
