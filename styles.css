@@ -286,21 +286,3 @@ section{ scroll-margin-top: 96px }
 .site-header.glass{display:flex;align-items:center;justify-content:center;min-height:68px;padding-block:10px;}
 .top-nav{display:flex;align-items:center;justify-content:space-between;width:100%;height:100%;min-height:48px;}
 .top-nav .nav-link{display:flex;align-items:center;justify-content:center;line-height:1;padding-block:8px;}
-
-/* guests select – match other fields */
-#contact select#guests {
-  width: 100%;
-  height: 48px;                /* כמו ה-inputs האחרים */
-  padding: 0 14px;
-  border-radius: 14px;
-  box-sizing: border-box;
-  font: inherit;               /* אותו גודל/פונט כמו היתר */
-  -webkit-appearance: none;
-  appearance: none;
-  line-height: 1.2;
-}
-
-/* אם בשאר השדות בדסקטופ יש גובה שונה – אפשר לכוון כאן */
-@media (min-width: 768px) {
-  #contact select#guests { height: 48px; }  /* שנה ל-56px אם זה הגובה אצלך */
-}

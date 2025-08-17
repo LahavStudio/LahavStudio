@@ -140,63 +140,28 @@ const y=document.getElementById('year'); if(y) y.textContent=(new Date).getFullY
   });
 })();
 
-/* guests options filler (50 → 1000) */
-(function(){
-  const sel = document.getElementById('guests') || document.querySelector('#contact select[name="guests"]');
-  if (!sel || sel.querySelector('option[value="50"]')) return;
-  if (!sel.querySelector('option[value=""]')) {
-    const first = document.createElement('option');
-    first.value = ''; first.disabled = true; first.selected = true;
-    first.textContent = 'בחר כמות';
-    sel.prepend(first);
-  }
-  for (let n = 50; n <= 1000; n += 50) {
-    if (!sel.querySelector(`option[value="${n}"]`)) {
-      const opt = document.createElement('option');
-      opt.value = String(n);
-      opt.textContent = n.toLocaleString('he-IL');
-      sel.appendChild(opt);
-    }
-  }
-})();
 
 // ===== v5.2.2 — WhatsApp redirect (capture-phase; overrides Sheets) =====
 (function(){
-  const PHONE = '972532799664';
-  const form = document.getElementById('leadFormSheets') || document.querySelector('#contact form');
-  if (!form) return;
-  const val = (n) => (form.querySelector(`[name="${n}"]`)?.value || '').trim();
-
-  // מלא את כמות המוזמנים אם ריק
-  const sel = form.querySelector('#guests');
-  if (sel && !sel.querySelector('option[value="50"]')) {
-    if (!sel.querySelector('option[value=""]')) {
-      const first = document.createElement('option');
-      first.value = ''; first.disabled = true; first.selected = true; first.textContent = 'בחר כמות';
-      sel.prepend(first);
-    }
-    for (let n = 50; n <= 1000; n += 50) {
-      const opt = document.createElement('option');
-      opt.value = String(n);
-      opt.textContent = n.toLocaleString('he-IL');
-      sel.appendChild(opt);
-    }
+  const form = document.getElementById('leadFormSheets');
+  if(!form) return;
+  const PHONE = '972532799664'; // יאן
+  function val(name){ const el=form.querySelector(`[name="${name}"]`); return el ? String(el.value||'').trim() : ''; }
+  function buildText(){
+    const name = val('name');
+    const phone= val('phone');
+    const date = val('event_date');
+    const type = val('event_type');
+    const pack = val('package');
+    const note = val('msg');
+    const lines = [];
+    lines.push(`היי, זה ${name || 'לקוח'} מהאתר להב סטודיו 📸`);
+    if (type || date) lines.push(`יש לי ${type || 'אירוע'} בתאריך ${date || '[תאריך]'} ואני מעוניין לשמוע עוד פרטים על חבילת ה-${pack || '[חבילה]'} 🎉`);
+    if (phone) lines.push(`זה מספר הפלאפון שלי: ${phone} 📱`);
+    if (note)  lines.push(`וחשוב לי שתדע על האירוע ש${note}`);
+    return lines.join('\
+');
   }
-function buildText(){
-  const name = val('name');
-  const phone= val('phone');
-  const date = val('event_date');
-  const type = val('event_type');
-  const pack = val('package');
-  const guests = val('guests');
-  const note = val('msg');
-  return `היי, זה ${name} מהאתר להב סטודיו 📸
-יש לי ${type} בתאריך ${date}
-כמות המוזמנים שלי היא: ${guests} 💃🏽
-ואני מעוניין לשמוע עוד פרטים על חבילת ה-${pack} 🎉
-זה מספר הפלאפון שלי:${phone} 📱
-וחשוב לי שתדע על האירוע ש${note}`;
-}
   form.addEventListener('submit', function(e){
     // run before any other submit listeners:
     e.preventDefault(); e.stopImmediatePropagation();
@@ -217,23 +182,19 @@ function buildText(){
   function val(n){ const el=form.querySelector(`[name="${n}"]`); return el ? String(el.value||'').trim() : ''; }
 
   function buildText(){
-  const name = val('name');
-  const phone= val('phone');
-  const date = val('event_date');
-  const type = val('event_type');
-  const pack = val('package');
-  const guests = val('guests');
-  const note = val('msg');
-
-  const msg = `היי, זה ${name} מהאתר להב סטודיו 📸
-יש לי ${type} בתאריך ${date}
-כמות המוזמנים שלי היא: ${guests} 💃🏽
-ואני מעוניין לשמוע עוד פרטים על חבילת ה-${pack} 🎉
-זה מספר הפלאפון שלי:${phone} 📱
-וחשוב לי שתדע על האירוע ש${note}`;
-
-  return encodeURIComponent(msg);
-}
+    const name = val('name');
+    const phone= val('phone');
+    const date = val('event_date');
+    const type = val('event_type');
+    const pack = val('package');
+    const note = val('msg');
+    const parts = [];
+    parts.push(`היי, זה ${name || 'לקוח'} מהאתר להב סטודיו 📸`);
+    parts.push(`יש לי ${type || 'אירוע'} בתאריך ${date || '[תאריך]'} ואני מעוניין לשמוע עוד פרטים על חבילת ה-${pack || '[חבילה]'} 🎉`);
+    if (phone) parts.push(`זה מספר הפלאפון שלי: ${phone} 📱`);
+    if (note)  parts.push(`וחשוב לי שתדע על האירוע ש${note}`);
+    return encodeURIComponent(parts.join('\
+'));
   }
 
   function update(){
@@ -279,103 +240,3 @@ document.querySelectorAll('.top-nav .nav-link').forEach(a=>{
     }
   }, {passive:false});
 });
-
-/* v5.2.2 — harden contact form: guests + WhatsApp submit (capture) */
-(function(){
-  // 1) locate the form robustly
-  var form =
-    document.getElementById('leadFormSheets') ||
-    document.getElementById('contactForm')   ||
-    document.querySelector('#contact form');
-  if (!form) return;
-
-  // 2) normalize form so it won't submit/refresh by itself
-  try { form.removeAttribute('action'); } catch(_){}
-  try { form.removeAttribute('target'); } catch(_){}
-
-  // 3) ensure the guests select exists and is populated 50..1000
-  function fillGuests(){
-    var sel = document.getElementById('guests') || form.querySelector('select[name="guests"]');
-    if (!sel) return;
-    // already filled?
-    if (sel.querySelector('option[value="50"]')) return;
-
-    // keep placeholder at the top
-    if (!sel.querySelector('option[value=""]')){
-      var first = document.createElement('option');
-      first.value = '';
-      first.disabled = true;
-      first.selected = true;
-      first.textContent = 'בחר כמות';
-      sel.prepend(first);
-    }
-
-    for (var n = 50; n <= 1000; n += 50){
-      if (!sel.querySelector('option[value="' + n + '"]')){
-        var opt = document.createElement('option');
-        opt.value = String(n);
-        opt.textContent = n.toLocaleString('he-IL');
-        sel.appendChild(opt);
-      }
-    }
-  }
-
-  // run now or on DOM ready (works בכל הדפדפנים)
-  if (document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', fillGuests, {once:true});
-  } else {
-    fillGuests();
-  }
-
-  // 4) helper to read values by name=
-  function val(n){
-    var el = form.querySelector('[name="'+n+'"]');
-    return el ? (el.value || '').trim() : '';
-  }
-
-  // 5) exact WhatsApp message (שורות חדשות אמיתיות)
-  function buildMsg(){
-    var name   = val('name');
-    var phone  = val('phone');
-    var date   = val('event_date');
-    var type   = val('event_type');
-    var pack   = val('package');
-    var guests = val('guests');
-    var note   = val('msg');
-
-    return `היי, זה ${name} מהאתר להב סטודיו 📸
-יש לי ${type} בתאריך ${date}
-כמות המוזמנים שלי היא: ${guests} 💃🏽
-ואני מעוניין לשמוע עוד פרטים על חבילת ה-${pack} 🎉
-זה מספר הפלאפון שלי:${phone} 📱
-וחשוב לי שתדע על האירוע ש${note}`;
-  }
-
-  // 6) capture submit FIRST: stop refresh, open WA
-  form.addEventListener('submit', function(e){
-    e.preventDefault();
-    e.stopImmediatePropagation(); // עוצר מאזינים אחרים שינסו לשלוח
-
-    var url = 'https://api.whatsapp.com/send?phone=972532799664&text=' + encodeURIComponent(buildMsg());
-
-    // תאימות iOS/Safari
-    setTimeout(function(){ window.location.href = url; }, 0);
-  }, true);
-
-  // 7) עוד גידור: מאזין bubble שמבטל כל שליחה מאוחרת
-  form.addEventListener('submit', function(e){ e.preventDefault(); }, false);
-
-  // 8) אם יש לך כפתור <a id="waSend"> — נעדכן לו קישור חי
-  var link = document.getElementById('waSend');
-  function updateLink(){
-    if (!link) return;
-    link.setAttribute(
-      'href',
-      'https://api.whatsapp.com/send?phone=972532799664&text=' + encodeURIComponent(buildMsg())
-    );
-  }
-  ['input','change'].forEach(function(ev){
-    form.addEventListener(ev, updateLink, true);
-  });
-  updateLink();
-})();
