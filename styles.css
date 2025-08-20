@@ -133,12 +133,25 @@ section{ scroll-margin-top: 96px }
 .cat-inner .chip.active,.cat-inner .chip:focus-visible{ color:#fff; border-color:transparent; background:linear-gradient(135deg, var(--p2), var(--p1)); box-shadow:var(--shadow); outline:none }
 
 /* Gallery */
-.gallery-grid{ display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:8px }
-@media (min-width:600px){ .gallery-grid{ grid-template-columns:repeat(3, minmax(0,1fr)) } }
-@media (min-width:900px){ .gallery-grid{ grid-template-columns:repeat(4, minmax(0,1fr)) } }
-.g-item{ border-radius:16px; overflow:hidden; display:block; box-shadow:var(--shadow); border:1px solid rgba(0,0,0,.06); padding:0; background:none }
-.g-item img{ width:100%; height:auto; display:block; transition:transform .35s }
+/* Gallery item as magnet 12:9 (4:3), no rounded corners */
+.g-item{
+  border-radius:0;
+  overflow:hidden;
+  display:block;
+  padding:0;
+  border:1px solid rgba(0,0,0,.06);
+  background:none;
+  aspect-ratio: 4 / 3; /* = 12:9 */
+}
+.g-item img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+  transition:transform .35s;
+}
 .g-item:hover img{ transform:scale(1.04) }
+
 
 /* Contact (white card visual) */
 .contact-form{
@@ -300,3 +313,45 @@ section{ scroll-margin-top: 96px }
   appearance:none;
   line-height:1.2;
 }
+
+/* ===== v5.3.0 — Carousel & Lightbox ===== */
+.carousel{ position:relative; }
+.car-viewport{ overflow:hidden; }
+.car-track{
+  display:flex;
+  transition: transform .36s ease;
+  will-change: transform;
+}
+.carousel .g-item{ flex: 0 0 25%; } /* 4 פריטים לרוחב */
+
+.car-arrow{
+  position:absolute; top:50%; transform:translateY(-50%);
+  width:44px; height:44px; border-radius:50%;
+  border:1px solid rgba(0,0,0,.12);
+  background:rgba(255,255,255,.6);
+  backdrop-filter:saturate(1.6) blur(6px);
+  cursor:pointer; z-index:2;
+}
+.car-arrow.left{ left:8px; }
+.car-arrow.right{ right:8px; }
+.carousel.no-arrows .car-arrow{ display:none; }
+
+/* Lightbox */
+.lightbox[hidden]{ display:none !important; }
+.lightbox{
+  position:fixed; inset:0; z-index:9999;
+  background:rgba(0,0,0,.82);
+  display:flex; align-items:center; justify-content:center;
+}
+.lb-stage{ max-width:92vw; max-height:92vh; }
+.lb-img{ max-width:92vw; max-height:92vh; display:block; }
+.lb-close, .lb-prev, .lb-next{
+  position:absolute; top:50%; transform:translateY(-50%);
+  width:44px; height:44px; border-radius:50%;
+  border:1px solid rgba(255,255,255,.25);
+  background:rgba(0,0,0,.35);
+  color:#fff; cursor:pointer;
+}
+.lb-close{ top:6%; right:2%; transform:none; }
+.lb-prev{ left:2%; }
+.lb-next{ right:2%; }
