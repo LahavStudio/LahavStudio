@@ -140,6 +140,26 @@ const y=document.getElementById('year'); if(y) y.textContent=(new Date).getFullY
   });
 })();
 
+/* guests options filler (50 → 1000) — insert between Sheets block and WA capture */
+(function(){
+  const sel = document.getElementById('guests') || document.querySelector('#contact select[name="guests"]');
+  if (!sel || sel.querySelector('option[value="50"]')) return;
+  if (!sel.querySelector('option[value=""]')) {
+    const first = document.createElement('option');
+    first.value = ''; first.disabled = true; first.selected = true;
+    first.textContent = 'בחר כמות';
+    sel.prepend(first);
+  }
+  for (let n = 50; n <= 1000; n += 50) {
+    if (!sel.querySelector(`option[value="${n}"]`)) {
+      const opt = document.createElement('option');
+      opt.value = String(n);
+      opt.textContent = n.toLocaleString('he-IL');
+      sel.appendChild(opt);
+    }
+  }
+})();
+
 
 // ===== v5.2.2 — WhatsApp redirect (capture-phase; overrides Sheets) =====
 (function(){
@@ -153,12 +173,22 @@ const y=document.getElementById('year'); if(y) y.textContent=(new Date).getFullY
     const date = val('event_date');
     const type = val('event_type');
     const pack = val('package');
+    const guests = val('guests');
     const note = val('msg');
     const lines = [];
     lines.push(`היי, זה ${name || 'לקוח'} מהאתר להב סטודיו 📸`);
-    if (type || date) lines.push(`יש לי ${type || 'אירוע'} בתאריך ${date || '[תאריך]'} ואני מעוניין לשמוע עוד פרטים על חבילת ה-${pack || '[חבילה]'} 🎉`);
-    if (phone) lines.push(`זה מספר הפלאפון שלי: ${phone} 📱`);
-    if (note)  lines.push(`וחשוב לי שתדע על האירוע ש${note}`);
+    if (type || date || pack) {
+      lines.push(`יש לי ${type || 'אירוע'} בתאריך ${date || '[תאריך]'} ואני מעוניין לשמוע עוד פרטים על חבילת ה-${pack || '[חבילה]'} 🎉`);
+    }
+    if (guests) {
+      lines.push(`כמות המוזמנים שלי היא: ${guests} 💃🏽`);
+    }
+    if (phone) {
+      lines.push(`זה מספר הפלאפון שלי: ${phone} 📱`);
+    }
+    if (note) {
+      lines.push(`וחשוב לי שתדע על האירוע ש${note}`);
+    }
     return lines.join('\
 ');
   }
@@ -187,12 +217,15 @@ const y=document.getElementById('year'); if(y) y.textContent=(new Date).getFullY
     const date = val('event_date');
     const type = val('event_type');
     const pack = val('package');
+    const guests = val('guests');
     const note = val('msg');
     const parts = [];
     parts.push(`היי, זה ${name || 'לקוח'} מהאתר להב סטודיו 📸`);
     parts.push(`יש לי ${type || 'אירוע'} בתאריך ${date || '[תאריך]'} ואני מעוניין לשמוע עוד פרטים על חבילת ה-${pack || '[חבילה]'} 🎉`);
-    if (phone) parts.push(`זה מספר הפלאפון שלי: ${phone} 📱`);
-    if (note)  parts.push(`וחשוב לי שתדע על האירוע ש${note}`);
+    if (guests) parts.push(`כמות המוזמנים שלי היא: ${guests} 💃🏽`);
+    if (phone)  parts.push(`זה מספר הפלאפון שלי: ${phone} 📱`);
+    if (note)   parts.push(`וחשוב לי שתדע על האירוע ש${note}`);
+
     return encodeURIComponent(parts.join('\
 '));
   }
