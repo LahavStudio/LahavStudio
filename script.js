@@ -84,48 +84,6 @@
 const y=document.getElementById('year'); if(y) y.textContent=(new Date).getFullYear();
 
 
-
-// v5.0.6 — Gallery category chips: robust delegation + URL sync + smooth scroll
-(function(){
-  const wrap = document.querySelector('.cat-inner');
-  const gallery = document.getElementById('gallery');
-  const items = Array.from(document.querySelectorAll('.g-item'));
-  const chips = Array.from(document.querySelectorAll('.cat-inner .chip'));
-  if(!wrap || items.length===0 || chips.length===0) return;
-
-  function apply(cat){
-    chips.forEach(c=>{
-      const active = (c.dataset.cat===cat);
-      c.classList.toggle('active', active);
-      c.setAttribute('aria-pressed', active ? 'true' : 'false');
-    });
-    items.forEach(it=>{
-      const k = it.dataset.cat || 'all';
-      it.style.display = (cat==='all' || k===cat) ? '' : 'none';
-    });
-  }
-
-  // Init from URL
-  const url = new URL(location.href);
-  let current = url.searchParams.get('cat') || 'all';
-  if(!chips.some(c=>c.dataset.cat===current)) current = 'all';
-  apply(current);
-
-  // Delegate clicks
-  wrap.addEventListener('click', (e)=>{
-    const btn = e.target.closest('.chip');
-    if(!btn) return;
-    e.preventDefault();
-    const cat = btn.dataset.cat || 'all';
-    current = cat;
-    apply(cat);
-    const u = new URL(location.href);
-    u.searchParams.set('cat', cat);
-    history.replaceState(null,'',u.toString());
-    if(gallery) gallery.scrollIntoView({behavior:'smooth'});
-  }, {passive:false});
-})();
-
 // Google Sheets submit + package selection
 (function(){
   const form=document.getElementById('leadFormSheets'); if(!form) return; const msg=document.getElementById('formMsg');
@@ -273,3 +231,174 @@ document.querySelectorAll('.top-nav .nav-link').forEach(a=>{
     }
   }, {passive:false});
 });
+
+
+// ===== v5.3.0 — Gallery Carousel + Lightbox (4-up, infinite, 12:9) =====
+(function(){
+  const root = document.querySelector('.carousel');
+  if(!root) return;
+
+  const track = root.querySelector('.car-track');
+  const viewport = root.querySelector('.car-viewport');
+  const btnPrev = root.querySelector('.car-arrow.left');
+  const btnNext = root.querySelector('.car-arrow.right');
+
+  let slides = Array.from(track.querySelectorAll('.g-item'));
+  const VISIBLE = 4;
+  const TRANSITION_MS = 360;
+  let isAnimating = false;
+
+  // אם יש <=4 פריטים — מסתירים חיצים, משאירים פתיחת לייטבוקס
+  if(slides.length <= VISIBLE){
+    root.classList.add('no-arrows');
+    slides.forEach(s => s.style.flex = `0 0 ${100/Math.max(slides.length, VISIBLE)}%`);
+    initLightbox(slides, VISIBLE, track);
+    return;
+  }
+
+  // לופ אינסופי: משכפלים תחילה+סוף
+  const headClones = slides.slice(0, VISIBLE).map(n => n.cloneNode(true));
+  const tailClones = slides.slice(-VISIBLE).map(n => n.cloneNode(true));
+  tailClones.forEach(c => track.insertBefore(c, track.firstChild));
+  headClones.forEach(c => track.appendChild(c));
+
+  slides = Array.from(track.querySelectorAll('.g-item'));
+  slides.forEach(s => s.style.flex = `0 0 ${100/VISIBLE}%`);
+
+  let index = VISIBLE; // מתחילים על הראשון האמיתי
+  function setTransition(on){
+    track.style.transition = on ? `transform ${TRANSITION_MS}ms ease` : 'none';
+  }
+  function update(animate=true){
+    setTransition(animate);
+    const translatePercent = -(index * (100 / VISIBLE));
+    track.style.transform = `translateX(${translatePercent}%)`;
+  }
+  update(false);
+
+  function step(dir){
+    if(isAnimating) return;
+    isAnimating = true;
+    index += (dir === 'next' ? 1 : -1);
+    update(true);
+  }
+  const next = ()=> step('next');
+  const prev = ()=> step('prev');
+
+  btnNext.addEventListener('click', next, {passive:true});
+  btnPrev.addEventListener('click', prev, {passive:true});
+
+  track.addEventListener('transitionend', ()=>{
+    isAnimating = false;
+    const realCount = slides.length - (2*VISIBLE);
+    if(index >= realCount + VISIBLE){ index = VISIBLE; update(false); }
+    else if(index <= 0){ index = realCount; update(false); }
+  });
+
+  // חיצי מקלדת על הקרוסלה
+  root.addEventListener('keydown', (e)=>{
+    if(e.key === 'ArrowRight') next();
+    else if(e.key === 'ArrowLeft') prev();
+  });
+
+  // סווייפ (pointer/touch)
+  let startX = 0, deltaX = 0, isDown = false;
+  const threshold = 30; // px
+  function onDown(e){
+    isDown = true;
+    startX = (e.touches ? e.touches[0].clientX : e.clientX);
+    deltaX = 0;
+  }
+  function onMove(e){
+    if(!isDown) return;
+    const x = (e.touches ? e.touches[0].clientX : e.clientX);
+    deltaX = x - startX;
+  }
+  function onUp(){
+    if(!isDown) return;
+    isDown = false;
+    if(Math.abs(deltaX) > threshold){
+      // RTL: גרירה שמאלה -> next
+      if(deltaX < 0) next(); else prev();
+    }
+  }
+  viewport.addEventListener('pointerdown', onDown, {passive:true});
+  window.addEventListener('pointermove', onMove, {passive:true});
+  window.addEventListener('pointerup', onUp, {passive:true});
+  viewport.addEventListener('touchstart', onDown, {passive:true});
+  window.addEventListener('touchmove', onMove, {passive:true});
+  window.addEventListener('touchend', onUp, {passive:true});
+
+  // אוטו־פליי
+  let autoplayTimer = null;
+  const AUTOPLAY_MS = 4000;
+  function startAuto(){ stopAuto(); autoplayTimer = setInterval(next, AUTOPLAY_MS); }
+  function stopAuto(){ if(autoplayTimer){ clearInterval(autoplayTimer); autoplayTimer = null; } }
+  startAuto();
+  root.addEventListener('mouseenter', stopAuto, {passive:true});
+  root.addEventListener('mouseleave', startAuto, {passive:true});
+  root.addEventListener('focusin', stopAuto);
+  root.addEventListener('focusout', startAuto);
+
+  // לייטבוקס
+  initLightbox(slides, VISIBLE, track);
+
+  // שמירה על מיקום נכון לאחר שינוי רוחב חלון
+  window.addEventListener('resize', ()=> update(false));
+
+  // --- helpers ---
+  function initLightbox(allSlides, visible, trackEl){
+    const lb = document.querySelector('.lightbox');
+    if(!lb) return;
+    const lbImg = lb.querySelector('.lb-img');
+    const btnClose = lb.querySelector('.lb-close');
+    const btnPrev = lb.querySelector('.lb-prev');
+    const btnNext = lb.querySelector('.lb-next');
+
+    function realItems(){
+      const kids = Array.from(trackEl.querySelectorAll('.g-item'));
+      return kids.slice(visible, kids.length - visible);
+    }
+    let current = 0;
+    function openAt(i){
+      const items = realItems();
+      const len = items.length || allSlides.length;
+      current = ((i % len) + len) % len;
+      const img = items[current].querySelector('img');
+      if(img){
+        lbImg.src = img.currentSrc || img.src;
+        lb.removeAttribute('hidden');
+        document.body.style.overflow = 'hidden';
+        lb.focus();
+      }
+    }
+    function close(){
+      lb.setAttribute('hidden', '');
+      document.body.style.overflow = '';
+    }
+    function nextLB(){ openAt(current+1); }
+    function prevLB(){ openAt(current-1); }
+
+    // פתיחה בלחיצה (כולל שכפולים — ממפים לאינדקס אמיתי)
+    allSlides.forEach((item, i)=>{
+      item.addEventListener('click', ()=>{
+        const items = realItems();
+        const total = items.length || allSlides.length;
+        const realIdx = ((i - visible) % total + total) % total;
+        openAt(realIdx);
+      });
+    });
+
+    btnClose.addEventListener('click', close, {passive:true});
+    btnNext.addEventListener('click', nextLB, {passive:true});
+    btnPrev.addEventListener('click', prevLB, {passive:true});
+    lb.addEventListener('click', (e)=>{ if(e.target === lb) close(); }, {passive:true});
+
+    document.addEventListener('keydown', (e)=>{
+      if(lb.hasAttribute('hidden')) return;
+      if(e.key === 'Escape') close();
+      else if(e.key === 'ArrowRight') nextLB();
+      else if(e.key === 'ArrowLeft') prevLB();
+    });
+  }
+})();
