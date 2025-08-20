@@ -233,7 +233,7 @@ document.querySelectorAll('.top-nav .nav-link').forEach(a=>{
 });
 
 
-// ===== v5.3.0 — Gallery Carousel + Lightbox (4-up, infinite, 12:9) =====
+// ===== v5.3.1 — Gallery Carousel Paged (2x2), infinite, swipe, desktop arrows, lightbox =====
 (function(){
   const root = document.querySelector('.carousel');
   if(!root) return;
@@ -243,41 +243,68 @@ document.querySelectorAll('.top-nav .nav-link').forEach(a=>{
   const btnPrev = root.querySelector('.car-arrow.left');
   const btnNext = root.querySelector('.car-arrow.right');
 
-  let slides = Array.from(track.querySelectorAll('.g-item'));
-  const VISIBLE = 4;
-  const TRANSITION_MS = 360;
-  let isAnimating = false;
+  // אסוף את כל הפריטים הקיימים (תמונות)
+  let items = Array.from(track.querySelectorAll('.g-item'));
+  if(items.length === 0) return;
 
-  // אם יש <=4 פריטים — מסתירים חיצים, משאירים פתיחת לייטבוקס
-  if(slides.length <= VISIBLE){
+  // הוסף אינדקסים קבועים לכל פריט (חשוב ללייטבוקס)
+  items.forEach((el, i)=> el.dataset.idx = String(i));
+
+  const PAGE_SIZE = 4; // 2x2 בכל עמוד
+  const TRANSITION_MS = 360;
+
+  // חלק לעמודים של 4
+  function chunk(arr, size){
+    const out = [];
+    for(let i=0;i<arr.length;i+=size) out.push(arr.slice(i, i+size));
+    return out;
+  }
+  const pagesData = chunk(items, PAGE_SIZE);
+
+  // נקה את ה-track ובנה car-page לכל עמוד
+  track.innerHTML = '';
+  function makePage(nodes){
+    const div = document.createElement('div');
+    div.className = 'car-page';
+    nodes.forEach(n => div.appendChild(n));
+    return div;
+  }
+  const realPages = pagesData.map(makePage);
+  realPages.forEach(p => track.appendChild(p));
+
+  // לופ אינסופי: משכפלים עמוד ראשון ואחרון
+  const headClone = realPages[0].cloneNode(true);
+  const tailClone = realPages[realPages.length-1].cloneNode(true);
+  track.insertBefore(tailClone, track.firstChild);
+  track.appendChild(headClone);
+
+  // רשימת כל העמודים כולל שכפולים
+  let pages = Array.from(track.querySelectorAll('.car-page'));
+
+  // אם יש רק עמוד אחד — נטרל חיצים (אין מה לדפדף)
+  const pageCount = realPages.length;
+  if(pageCount <= 1){
     root.classList.add('no-arrows');
-    slides.forEach(s => s.style.flex = `0 0 ${100/Math.max(slides.length, VISIBLE)}%`);
-    initLightbox(slides, VISIBLE, track);
-    return;
+  }else{
+    root.classList.remove('no-arrows');
   }
 
-  // לופ אינסופי: משכפלים תחילה+סוף
-  const headClones = slides.slice(0, VISIBLE).map(n => n.cloneNode(true));
-  const tailClones = slides.slice(-VISIBLE).map(n => n.cloneNode(true));
-  tailClones.forEach(c => track.insertBefore(c, track.firstChild));
-  headClones.forEach(c => track.appendChild(c));
-
-  slides = Array.from(track.querySelectorAll('.g-item'));
-  slides.forEach(s => s.style.flex = `0 0 ${100/VISIBLE}%`);
-
-  let index = VISIBLE; // מתחילים על הראשון האמיתי
+  // מיקום התחלתי: העמוד האמיתי הראשון (index=1 כי 0 זה השכפול בזנב)
+  let index = 1;
   function setTransition(on){
     track.style.transition = on ? `transform ${TRANSITION_MS}ms ease` : 'none';
   }
   function update(animate=true){
     setTransition(animate);
-    const translatePercent = -(index * (100 / VISIBLE));
-    track.style.transform = `translateX(${translatePercent}%)`;
+    const translate = -(index * 100); // כל עמוד = 100%
+    track.style.transform = `translateX(${translate}%)`;
   }
   update(false);
 
+  // ניווט
+  let isAnimating = false;
   function step(dir){
-    if(isAnimating) return;
+    if(isAnimating || pageCount <= 1) return;
     isAnimating = true;
     index += (dir === 'next' ? 1 : -1);
     update(true);
@@ -285,25 +312,23 @@ document.querySelectorAll('.top-nav .nav-link').forEach(a=>{
   const next = ()=> step('next');
   const prev = ()=> step('prev');
 
-  btnNext.addEventListener('click', next, {passive:true});
-  btnPrev.addEventListener('click', prev, {passive:true});
+  // חיצים (יראו רק בדסקטופ לפי CSS)
+  btnNext?.addEventListener('click', next, {passive:true});
+  btnPrev?.addEventListener('click', prev, {passive:true});
 
+  // לופ אחרי טרנזישן
   track.addEventListener('transitionend', ()=>{
     isAnimating = false;
-    const realCount = slides.length - (2*VISIBLE);
-    if(index >= realCount + VISIBLE){ index = VISIBLE; update(false); }
-    else if(index <= 0){ index = realCount; update(false); }
+    if(index >= pageCount + 1){ // עברנו את השכפול בסוף → קפיצה לעמוד 1
+      index = 1; update(false);
+    }else if(index <= 0){ // עברנו את השכפול בתחילה → קפיצה לעמוד האחרון
+      index = pageCount; update(false);
+    }
   });
 
-  // חיצי מקלדת על הקרוסלה
-  root.addEventListener('keydown', (e)=>{
-    if(e.key === 'ArrowRight') next();
-    else if(e.key === 'ArrowLeft') prev();
-  });
-
-  // סווייפ (pointer/touch)
+  // סווייפ (pointer/touch) – עמוד־עמוד
   let startX = 0, deltaX = 0, isDown = false;
-  const threshold = 30; // px
+  const threshold = 40; // px
   function onDown(e){
     isDown = true;
     startX = (e.touches ? e.touches[0].clientX : e.clientX);
@@ -329,10 +354,10 @@ document.querySelectorAll('.top-nav .nav-link').forEach(a=>{
   window.addEventListener('touchmove', onMove, {passive:true});
   window.addEventListener('touchend', onUp, {passive:true});
 
-  // אוטו־פליי
+  // אוטו-פליי
   let autoplayTimer = null;
   const AUTOPLAY_MS = 4000;
-  function startAuto(){ stopAuto(); autoplayTimer = setInterval(next, AUTOPLAY_MS); }
+  function startAuto(){ stopAuto(); if(pageCount>1) autoplayTimer = setInterval(next, AUTOPLAY_MS); }
   function stopAuto(){ if(autoplayTimer){ clearInterval(autoplayTimer); autoplayTimer = null; } }
   startAuto();
   root.addEventListener('mouseenter', stopAuto, {passive:true});
@@ -340,14 +365,14 @@ document.querySelectorAll('.top-nav .nav-link').forEach(a=>{
   root.addEventListener('focusin', stopAuto);
   root.addEventListener('focusout', startAuto);
 
-  // לייטבוקס
-  initLightbox(slides, VISIBLE, track);
+  // לייטבוקס – עובד על כל הפריטים האמיתיים (לא שכפולים)
+  initLightbox();
 
-  // שמירה על מיקום נכון לאחר שינוי רוחב חלון
+  // התאמה ברזולוציה – שמירת מיקום
   window.addEventListener('resize', ()=> update(false));
 
-  // --- helpers ---
-  function initLightbox(allSlides, visible, trackEl){
+  // --- Lightbox helper ---
+  function initLightbox(){
     const lb = document.querySelector('.lightbox');
     if(!lb) return;
     const lbImg = lb.querySelector('.lb-img');
@@ -355,16 +380,16 @@ document.querySelectorAll('.top-nav .nav-link').forEach(a=>{
     const btnPrev = lb.querySelector('.lb-prev');
     const btnNext = lb.querySelector('.lb-next');
 
-    function realItems(){
-      const kids = Array.from(trackEl.querySelectorAll('.g-item'));
-      return kids.slice(visible, kids.length - visible);
-    }
+    // כל הפריטים האמיתיים (בלי השכפולים)
+    const realPagesEls = Array.from(track.querySelectorAll('.car-page')).slice(1, -1);
+    const realItems = realPagesEls.flatMap(p => Array.from(p.querySelectorAll('.g-item')));
+
     let current = 0;
     function openAt(i){
-      const items = realItems();
-      const len = items.length || allSlides.length;
+      const len = realItems.length;
+      if(!len) return;
       current = ((i % len) + len) % len;
-      const img = items[current].querySelector('img');
+      const img = realItems[current].querySelector('img');
       if(img){
         lbImg.src = img.currentSrc || img.src;
         lb.removeAttribute('hidden');
@@ -373,27 +398,25 @@ document.querySelectorAll('.top-nav .nav-link').forEach(a=>{
       }
     }
     function close(){
-      lb.setAttribute('hidden', '');
+      lb.setAttribute('hidden','');
       document.body.style.overflow = '';
     }
     function nextLB(){ openAt(current+1); }
     function prevLB(){ openAt(current-1); }
 
-    // פתיחה בלחיצה (כולל שכפולים — ממפים לאינדקס אמיתי)
-    allSlides.forEach((item, i)=>{
-      item.addEventListener('click', ()=>{
-        const items = realItems();
-        const total = items.length || allSlides.length;
-        const realIdx = ((i - visible) % total + total) % total;
-        openAt(realIdx);
-      });
+    // פתיחה בלחיצה – נעזר ב-data-idx שהוספנו לפני הקיבוץ לעמודים
+    track.addEventListener('click', (e)=>{
+      const btn = e.target.closest('.g-item');
+      if(!btn) return;
+      const idx = Number(btn.dataset.idx || '0');
+      openAt(idx);
     });
 
-    btnClose.addEventListener('click', close, {passive:true});
-    btnNext.addEventListener('click', nextLB, {passive:true});
-    btnPrev.addEventListener('click', prevLB, {passive:true});
-    lb.addEventListener('click', (e)=>{ if(e.target === lb) close(); }, {passive:true});
+    btnClose?.addEventListener('click', close, {passive:true});
+    btnNext?.addEventListener('click', nextLB, {passive:true});
+    btnPrev?.addEventListener('click', prevLB, {passive:true});
 
+    lb.addEventListener('click', (e)=>{ if(e.target === lb) close(); }, {passive:true});
     document.addEventListener('keydown', (e)=>{
       if(lb.hasAttribute('hidden')) return;
       if(e.key === 'Escape') close();
