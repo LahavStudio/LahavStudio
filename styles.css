@@ -322,7 +322,25 @@ section{ scroll-margin-top: 96px }
   transition: transform .36s ease;
   will-change: transform;
 }
-.carousel .g-item{ flex: 0 0 25%; } /* 4 פריטים לרוחב */
+/* עמוד קרוסלה 2x2: כל עמוד רוחב מלא, שתי עמודות */
+.car-page{
+  flex: 0 0 100%;                /* כל עמוד = 100% רוחב ה־viewport */
+  display: grid;                 /* רשת 2x2 */
+  grid-template-columns: repeat(2, 1fr);
+  /* gap: 0; */                  /* אם תרצה רווחים בין התמונות, פתח והחלף ל-8px למשל */
+}
+
+/* חיצים רק בדסקטופ; במובייל אין חיצים (סווייפ בלבד) */
+@media (max-width: 900px){
+  .car-arrow{ display: none !important; }
+}
+@media (min-width: 901px){
+  .car-arrow{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
 
 .car-arrow{
   position:absolute; top:50%; transform:translateY(-50%);
